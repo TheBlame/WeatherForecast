@@ -18,11 +18,11 @@ interface ForecastApi {
     suspend fun loadForecast(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
-        @Query("current") currentArgs: List<Current>?,
-        @Query("hourly") hourlyArgs: List<Hourly>?,
-        @Query("daily") dailyArgs: List<Daily>?,
+        @Query("current") currentArgs: @JvmSuppressWildcards List<Current>?,
+        @Query("hourly") hourlyArgs: @JvmSuppressWildcards List<Hourly>?,
+        @Query("daily") dailyArgs: @JvmSuppressWildcards List<Daily>?,
         @Query("temperature_unit") unit: TemperatureUnit,
-        @Query("timeformat") timeFormat:String = "unix",
+        @Query("timeformat") timeFormat:String = "unixtime",
         @Query("timezone") timeZone: String = "auto"
     ): ForecastDto
 
