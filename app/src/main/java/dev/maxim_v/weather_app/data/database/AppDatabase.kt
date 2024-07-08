@@ -33,4 +33,6 @@ abstract class AppDatabase : RoomDatabase() {
                 AppDatabase::class.java, DB_NAME
             ).build()
     }
+
+    abstract fun forecastDao(): ForecastDao
 }

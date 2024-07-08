@@ -2,12 +2,12 @@ package dev.maxim_v.weather_app.data.database.dbmodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import dev.maxim_v.weather_app.domain.entity.WeatherType
+import dev.maxim_v.weather_app.data.WeatherCode
 
 @Entity(tableName = "hourly_forecast")
 data class HourlyForecastDbModel(
     val temp: Double,
-    val weatherType: WeatherType,
+    val weatherCode: WeatherCode,
     @PrimaryKey
     val timestamp: Long
 )
