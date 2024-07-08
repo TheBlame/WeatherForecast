@@ -26,7 +26,7 @@ fun ForecastDto.toHourlyForecastDbModelList(): List<HourlyForecastDbModel>? {
                     HourlyForecastDbModel(
                         temp = temp[time.index],
                         weatherCode = weatherCode[time.index],
-                        timestamp = time.value + this@toHourlyForecastDbModelList.utcOffsetSeconds
+                        timestamp = time.value
                     )
                 )
             }
@@ -47,7 +47,7 @@ fun ForecastDto.toDailyForecastDbModelList(): List<DailyForecastDbModel>? {
                         minTemp = minTemp[time.index],
                         maxTemp = maxTemp[time.index],
                         weatherCode = weatherCode[time.index],
-                        timestamp = time.value + this@toDailyForecastDbModelList.utcOffsetSeconds
+                        timestamp = time.value
                     )
                 )
             }

@@ -1,6 +1,6 @@
 package dev.maxim_v.weather_app.domain.entity
 
-data class Daily(
+data class DailyForecast(
     val date: String,
     val minTemp: String,
     val maxTemp: String,

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetWeatherUseCase(private val repository: WeatherRepository) {
 
-    operator fun invoke(vararg weatherSample: WeatherSample): Flow<List<WeatherModel>> {
+    suspend operator fun invoke(vararg weatherSample: WeatherSample): Flow<Map<WeatherSample, WeatherModel>> {
         return repository.getWeather(*weatherSample)
     }
 }
