@@ -8,6 +8,11 @@ sealed class WeatherModel {
         val location: String = "",
         val time: String = "",
         val temp: String = "",
+        val apparentTemp: String = "",
+        val humidity: String = "",
+        val windSpeed: String = "",
+        val windDirection: String = "",
+        val precipitation: String = "",
         val weatherType: WeatherType = CLEAR
     ) : WeatherModel()
 

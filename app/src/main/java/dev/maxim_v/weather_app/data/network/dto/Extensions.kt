@@ -8,8 +8,14 @@ fun ForecastDto.toCurrentForecastDbModel(): CurrentForecastDbModel? {
     return if (this.current != null) {
         CurrentForecastDbModel(
             temp = this.current.temperature2m,
+            apparentTemp = this.current.apparentTemperature,
+            precipitation = this.current.precipitation,
+            humidity = this.current.relativeHumidity2m,
+            windSpeed = this.current.windSpeed10m,
+            windDirection = this.current.windDirection10m,
             weatherCode = this.current.weatherCode,
-            location = "${this.latitude} ${this.longitude}",
+            latitude = this.latitude,
+            longitude = this.longitude,
             timestamp = this.current.time
         )
     } else null

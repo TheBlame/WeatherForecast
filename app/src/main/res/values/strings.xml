@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WeatherForecast</string>
+    <string name="celsius">°C</string>
+    <string name="humidity">%</string>
+    <string name="precipitation">mm</string>
+    <string name="wind_speed">km/h</string>
 </resources>
