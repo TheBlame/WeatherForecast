@@ -1,6 +1,5 @@
 package dev.maxim_v.weather_app.data.database.dbmodels
 
-import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
 import dev.maxim_v.weather_app.util.Direction
 import dev.maxim_v.weather_app.util.mapTimeStampToDate
@@ -12,12 +11,12 @@ fun CurrentForecastDbModel?.toCurrent(location: String): WeatherModel.CurrentSam
         WeatherModel.CurrentSample(
             location = location,
             time = mapTimeStampToDate(this.timestamp * MILLIS_IN_SECONDS),
-            temp = "${this.temp}${R.string.celsius}",
-            apparentTemp = "${this.apparentTemp}${R.string.celsius}",
-            humidity = "${this.humidity}${R.string.humidity}",
-            windSpeed = "${this.windSpeed}${R.string.wind_speed}",
+            temp = "${this.temp}",
+            apparentTemp = "${this.apparentTemp}",
+            humidity = "${this.humidity}",
+            windSpeed = "${this.windSpeed}",
             windDirection = Direction[this.windDirection].name,
-            precipitation = "${this.precipitation}${R.string.precipitation}",
+            precipitation = "${this.precipitation}",
             weatherType = this.weatherCode.toWeatherType()
         )
     } else {

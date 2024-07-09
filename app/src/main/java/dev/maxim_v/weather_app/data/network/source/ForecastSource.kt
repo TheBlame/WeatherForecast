@@ -6,8 +6,9 @@ import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class ForecastSource(private val forecastApi: ForecastApi) {
+class ForecastSource @Inject constructor(private val forecastApi: ForecastApi) {
 
     suspend fun getForecast(request: ForecastRequest) =
         wrapRetrofitExceptions { forecastApi.loadForecast(
