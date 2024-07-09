@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app
+package dev.maxim_v.weather_app.presentation
 
 import android.location.Geocoder
 import android.os.Bundle
@@ -27,11 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.CURRENT
 import dev.maxim_v.weather_app.domain.entity.WeatherType
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
-import dev.maxim_v.weather_app.ui.theme.WeatherForecastTheme
+import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter

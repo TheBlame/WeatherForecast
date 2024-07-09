@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.ui.theme
+package dev.maxim_v.weather_app.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

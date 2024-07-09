@@ -9,6 +9,7 @@ import dev.maxim_v.weather_app.domain.usecases.GetWeatherUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,9 @@ class MainScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getWeatherUseCase(CURRENT, HOURLY, DAILY).collectLatest {
+            getWeatherUseCase(CURRENT, HOURLY, DAILY)
+                .onStart { _mainScreenState.value = MainScreenState.Loading }
+                .collectLatest {
                 _mainScreenState.value = MainScreenState.Success(it)
             }
         }
