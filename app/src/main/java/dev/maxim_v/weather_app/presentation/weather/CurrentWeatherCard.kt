@@ -1,0 +1,136 @@
+package dev.maxim_v.weather_app.presentation.weather
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import dev.maxim_v.weather_app.R
+import dev.maxim_v.weather_app.domain.entity.WeatherModel
+import dev.maxim_v.weather_app.presentation.selectIcon
+import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
+import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
+
+@Composable
+fun CurrentWeatherCard(
+    modifier: Modifier = Modifier,
+    currentWeather: WeatherModel.CurrentSample
+) {
+    Card(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .width(IntrinsicSize.Max)
+        ) {
+            Text(
+                style = ReplacementTheme.typography.large,
+                text = currentWeather.location
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                style = ReplacementTheme.typography.large,
+                text = currentWeather.time
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        style = ReplacementTheme.typography.extraLarge,
+                        text = stringResource(id = R.string.celsius, currentWeather.temp)
+                    )
+                    Text(
+                        style = ReplacementTheme.typography.small,
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = stringResource(id = R.string.apparent, currentWeather.apparentTemp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    modifier = Modifier.size(96.dp),
+                    painter = painterResource(id = selectIcon(currentWeather.weatherType)),
+                    contentDescription = null
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconWithText(
+                    icon = R.drawable.water_percent,
+                    text = stringResource(id = R.string.humidity, currentWeather.humidity)
+                )
+                IconWithText(
+                    icon = R.drawable.weather_windy,
+                    text = stringResource(
+                        id = R.string.wind_speed,
+                        currentWeather.windSpeed,
+                        currentWeather.windDirection
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun IconWithText(icon: Int, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(18.dp),
+            painter = painterResource(id = icon),
+            contentDescription = null,
+
+            )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            style = ReplacementTheme.typography.small,
+            text = text
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CurrentWeatherCardPreview() {
+    WeatherForecastTheme {
+        CurrentWeatherCard(
+            modifier = Modifier.fillMaxWidth(),
+            currentWeather = WeatherModel.CurrentSample(
+                location = "Location",
+                time = "12:00",
+                temp = "28",
+                apparentTemp = "25",
+                humidity = "30",
+                windSpeed = "10",
+                windDirection = "south",
+                precipitation = "0 mm"
+            )
+        )
+    }
+}
