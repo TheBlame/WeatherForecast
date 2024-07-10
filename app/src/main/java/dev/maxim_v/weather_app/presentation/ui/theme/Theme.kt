@@ -8,17 +8,24 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
-    secondary = PurpleGrey80,
+    secondary = Black500,
     tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
-    secondary = PurpleGrey40,
+    secondary = Black500,
     tertiary = Pink40
 
     /* Other default colors to override
@@ -32,6 +39,23 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+@Immutable
+data class AppTypography(
+    val small: TextStyle,
+    val medium: TextStyle,
+    val large: TextStyle,
+    val extraLarge: TextStyle
+)
+
+val LocalAppTypography = staticCompositionLocalOf {
+    AppTypography(
+        small = TextStyle.Default,
+        medium = TextStyle.Default,
+        large = TextStyle.Default,
+        extraLarge = TextStyle.Default
+    )
+}
+
 @Composable
 fun WeatherForecastTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -40,17 +64,58 @@ fun WeatherForecastTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-        val context = LocalContext.current
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-      darkTheme -> DarkColorScheme
-      else -> LightColorScheme
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
-    MaterialTheme(
-      colorScheme = colorScheme,
-      typography = Typography,
-      content = content
+    val appTypography = AppTypography(
+            small = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                letterSpacing = 0.2.sp
+            ),
+            medium = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                letterSpacing = 0.4.sp
+            ),
+            large = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = 22.sp,
+                lineHeight = 26.sp,
+                letterSpacing = 0.5.sp
+            ),
+            extraLarge = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = 64.sp,
+                lineHeight = 68.sp,
+                letterSpacing = 0.5.sp
+            )
     )
+
+    CompositionLocalProvider(
+        LocalAppTypography provides appTypography
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content
+        )
+    }
+}
+
+object ReplacementTheme {
+    val typography: AppTypography
+        @Composable
+        get() = LocalAppTypography.current
 }
