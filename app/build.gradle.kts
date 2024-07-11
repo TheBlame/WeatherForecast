@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.maxim_v.weather_app"
-        minSdk = 33
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

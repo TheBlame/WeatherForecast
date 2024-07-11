@@ -17,24 +17,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import dev.maxim_v.weather_app.R
-import dev.maxim_v.weather_app.domain.entity.WeatherModel
-import dev.maxim_v.weather_app.domain.entity.WeatherSample.CURRENT
 import dev.maxim_v.weather_app.domain.entity.WeatherType
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -54,37 +47,10 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            var weather = remember {
-                mutableStateOf(Weather(city = "qwe", temp = "qwe", date = "qwe", weather = WeatherType.SNOW))
-
-            }
-
-
-
-
-                lifecycleScope.launch {
-                    repo.getWeather(CURRENT).collectLatest {
-
-                            weather.value = Weather(
-                                city = (it[CURRENT] as WeatherModel.CurrentSample).location,
-                                temp = (it[CURRENT] as WeatherModel.CurrentSample).temp,
-                                date = (it[CURRENT] as WeatherModel.CurrentSample).time,
-                                weather = (it[CURRENT] as WeatherModel.CurrentSample).weatherType
-
-                            )
-
-                    }
-
-
-                }
-
 
             WeatherForecastTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        weather = weather.value,
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
                 }
             }
         }

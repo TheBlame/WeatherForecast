@@ -4,6 +4,7 @@ enum class Direction {
     NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST;
 
     companion object {
+
         operator fun get(degree: Int): Direction {
             return when (degree) {
                 in 22..<67 -> NORTH_EAST

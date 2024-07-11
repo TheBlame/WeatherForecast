@@ -105,7 +105,6 @@ fun IconWithText(icon: Int, text: String) {
             modifier = Modifier.size(18.dp),
             painter = painterResource(id = icon),
             contentDescription = null,
-
             )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
