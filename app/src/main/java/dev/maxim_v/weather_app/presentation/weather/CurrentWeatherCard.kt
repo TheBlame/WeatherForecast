@@ -40,13 +40,13 @@ fun CurrentWeatherCard(
                 .width(IntrinsicSize.Max)
         ) {
             Text(
+                text = currentWeather.location,
                 style = ReplacementTheme.typography.large,
-                text = currentWeather.location
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
+                text = currentWeather.time,
                 style = ReplacementTheme.typography.large,
-                text = currentWeather.time
             )
             Spacer(modifier = Modifier.height(4.dp))
             Row(
@@ -57,13 +57,13 @@ fun CurrentWeatherCard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
+                        text = stringResource(id = R.string.celsius, currentWeather.temp),
                         style = ReplacementTheme.typography.extraLarge,
-                        text = stringResource(id = R.string.celsius, currentWeather.temp)
                     )
                     Text(
+                        text = stringResource(id = R.string.apparent, currentWeather.apparentTemp),
                         style = ReplacementTheme.typography.small,
                         color = MaterialTheme.colorScheme.secondary,
-                        text = stringResource(id = R.string.apparent, currentWeather.apparentTemp)
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -108,8 +108,8 @@ fun IconWithText(icon: Int, text: String) {
             )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
+            text = text,
             style = ReplacementTheme.typography.small,
-            text = text
         )
     }
 }

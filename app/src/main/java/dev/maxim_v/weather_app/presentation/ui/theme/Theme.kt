@@ -95,28 +95,28 @@ fun WeatherForecastTheme(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 10.sp,
-            lineHeight = 12.sp,
+            lineHeight = 14.sp,
             letterSpacing = 0.1.sp
         ),
         small = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
-            lineHeight = 16.sp,
+            lineHeight = 18.sp,
             letterSpacing = 0.1.sp
         ),
         medium = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             lineHeight = 20.sp,
             letterSpacing = 0.4.sp
         ),
         large = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
-            fontSize = 22.sp,
-            lineHeight = 26.sp,
+            fontSize = 28.sp,
+            lineHeight = 32.sp,
             letterSpacing = 0.5.sp
         ),
         extraLarge = TextStyle(
