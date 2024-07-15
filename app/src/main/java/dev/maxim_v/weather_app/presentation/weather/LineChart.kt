@@ -219,21 +219,21 @@ private fun PreviewChart() {
         HourlyForecast("18:00", 25, WeatherType.entries.toTypedArray().random()),
     )
 
-    WeatherForecastTheme {
+    WeatherForecastTheme(darkTheme = true) {
         LineChart(
             modifier = Modifier
-                .background(Color.Black.copy(alpha = 0.25f))
+                .background(MaterialTheme.colorScheme.background)
                 .horizontalScroll(rememberScrollState())
                 .height(300.dp)
                 .width(800.dp),
             data = data,
-            mainGraphLineColor = Color.Yellow,
+            mainGraphLineColor = MaterialTheme.colorScheme.primary,
             secondaryGraphLineColor = MaterialTheme.colorScheme.secondary,
             secondaryGraphLineAlpha = 0.5f,
-            graphGradientColor = MaterialTheme.colorScheme.secondary,
+            graphGradientColor = MaterialTheme.colorScheme.inversePrimary,
             graphGradientAlpha = 0.5f,
-            textColor = MaterialTheme.colorScheme.onPrimary,
-            timeTextColor = MaterialTheme.colorScheme.secondary,
+            textColor = MaterialTheme.colorScheme.onBackground,
+            timeTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
             valueTextStyle = ReplacementTheme.typography.small,
             timeTextStyle = ReplacementTheme.typography.extraSmall
         )

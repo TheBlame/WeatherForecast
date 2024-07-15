@@ -54,7 +54,8 @@ class WeatherRepositoryImpl @Inject constructor(
             ),
             hourlyArgs = null,
             dailyArgs = null,
-            unit = TemperatureUnit.CELSIUS
+            unit = TemperatureUnit.CELSIUS,
+            days = 1
         )
         val result = forecastSource.getForecast(request)
 
@@ -83,7 +84,8 @@ class WeatherRepositoryImpl @Inject constructor(
             ),
             hourlyArgs = listOf(Hourly.TEMPERATURE, Hourly.CODE),
             dailyArgs = listOf(Daily.MAX_TEMPERATURE, Daily.MIN_TEMPERATURE, Daily.CODE),
-            unit = TemperatureUnit.CELSIUS
+            unit = TemperatureUnit.CELSIUS,
+            days = 15
         )
         val result = forecastSource.getForecast(request)
 

@@ -11,5 +11,6 @@ data class ForecastRequest(
     val currentArgs: List<Current>?,
     val hourlyArgs: List<Hourly>?,
     val dailyArgs: List<Daily>?,
-    val unit: TemperatureUnit
+    val unit: TemperatureUnit,
+    val days: Int
 )

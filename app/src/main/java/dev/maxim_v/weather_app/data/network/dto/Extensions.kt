@@ -28,10 +28,13 @@ fun ForecastDto.toHourlyForecastDbModelList(): List<HourlyForecastDbModel>? {
         val timeStamp = this.hourly.time
         buildList {
             for (time in timeStamp.withIndex()) {
+                val t = temp[time.index]
+                val c = weatherCode[time.index]
+                if (t == null || c == null) continue
                 add(
                     HourlyForecastDbModel(
-                        temp = temp[time.index],
-                        weatherCode = weatherCode[time.index],
+                        temp = t,
+                        weatherCode = c,
                         timestamp = time.value
                     )
                 )

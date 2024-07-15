@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,9 +33,13 @@ import dev.maxim_v.weather_app.util.selectIcon
 @Composable
 fun CurrentWeatherCard(
     modifier: Modifier = Modifier,
+    colors: CardColors = CardDefaults.cardColors(),
     currentWeather: WeatherModel.CurrentSample
 ) {
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier,
+        colors = colors
+    ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -63,7 +69,7 @@ fun CurrentWeatherCard(
                     Text(
                         text = stringResource(id = R.string.apparent, currentWeather.apparentTemp),
                         style = ReplacementTheme.typography.small,
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -117,7 +123,7 @@ fun IconWithText(icon: Int, text: String) {
 @Preview
 @Composable
 private fun CurrentWeatherCardPreview() {
-    WeatherForecastTheme {
+    WeatherForecastTheme(darkTheme = true) {
         CurrentWeatherCard(
             modifier = Modifier.fillMaxWidth(),
             currentWeather = WeatherModel.CurrentSample(

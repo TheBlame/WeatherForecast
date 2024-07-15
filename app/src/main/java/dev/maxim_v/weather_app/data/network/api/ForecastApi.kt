@@ -24,7 +24,7 @@ interface ForecastApi {
         @Query("temperature_unit") unit: TemperatureUnit,
         @Query("timeformat") timeFormat:String = "unixtime",
         @Query("timezone") timeZone: String = "auto",
-        @Query("forecast_days") forecastDays: Int = 16
+        @Query("forecast_days") forecastDays: Int
     ): ForecastDto
 
     companion object {

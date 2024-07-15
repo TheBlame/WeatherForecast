@@ -8,7 +8,7 @@ import java.util.Locale
 
 fun mapTimeStampToDate(timeStamp: Long): String {
     val date = Date(timeStamp)
-    return SimpleDateFormat("d, MMMM yyyy, HH:mm", Locale.getDefault()).format(date)
+    return SimpleDateFormat("d MMMM yyyy, HH:mm", Locale.getDefault()).format(date)
 }
 
 fun mapTimeStampToDay(timeStamp: Long): String {
@@ -18,7 +18,7 @@ fun mapTimeStampToDay(timeStamp: Long): String {
 
 fun mapTimeStampToHours(timeStamp: Long): String {
     val date = Date(timeStamp)
-    return SimpleDateFormat("d, HH:mm", Locale.getDefault()).format(date)
+    return SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
 }
 
 fun selectIcon(weatherType: WeatherType): Int {

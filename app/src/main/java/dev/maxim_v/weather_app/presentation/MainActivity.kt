@@ -7,9 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.AndroidEntryPoint
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     MainScreen(modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxHeight()
-                        .background(Color.Black.copy(alpha = 0.25f))
+                        .background(MaterialTheme.colorScheme.background)
                     )
                 }
             }

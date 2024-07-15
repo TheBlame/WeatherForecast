@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,29 +39,42 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainScreenViewModel = v
                         .padding(horizontal = 16.dp, vertical = 16.dp)
                         .padding(top = 16.dp)
                         .fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ),
                     currentWeather = currentState.data[CURRENT] as WeatherModel.CurrentSample
                 )
                 LineChart(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
                         .height(300.dp)
-                        .width(2000.dp),
+                        .width(1800.dp),
                     data = (currentState.data[HOURLY] as WeatherModel.HourlySample).sample,
                     mainGraphLineColor = MaterialTheme.colorScheme.tertiary,
                     secondaryGraphLineColor = MaterialTheme.colorScheme.secondary,
                     secondaryGraphLineAlpha = 0.5f,
-                    graphGradientColor = MaterialTheme.colorScheme.secondary,
+                    graphGradientColor = MaterialTheme.colorScheme.primary,
                     graphGradientAlpha = 0.5f,
-                    textColor = MaterialTheme.colorScheme.onPrimary,
-                    timeTextColor = MaterialTheme.colorScheme.secondary,
+                    textColor = MaterialTheme.colorScheme.onBackground,
+                    timeTextColor = MaterialTheme.colorScheme.onSurface,
                     valueTextStyle = ReplacementTheme.typography.small,
                     timeTextStyle = ReplacementTheme.typography.extraSmall
                 )
-                LazyRow(contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     items(
                         items = (currentState.data[DAILY] as WeatherModel.DailySample).sample,
                         key = { it.date }) { item: DailyForecast ->
-                        DailyTempCard(dailyForecast = item)
+                        DailyTempCard(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            dailyForecast = item
+                        )
                     }
                 }
             }

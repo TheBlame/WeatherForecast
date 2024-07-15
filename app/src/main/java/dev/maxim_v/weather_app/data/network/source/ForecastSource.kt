@@ -17,7 +17,8 @@ class ForecastSource @Inject constructor(private val forecastApi: ForecastApi) {
             currentArgs = request.currentArgs,
             hourlyArgs = request.hourlyArgs,
             dailyArgs = request.dailyArgs,
-            unit = request.unit
+            unit = request.unit,
+            forecastDays = request.days
         ) }
 
     private suspend fun <T> wrapRetrofitExceptions(block: suspend () -> T): RequestResult<T> {
