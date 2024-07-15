@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.DailyForecast
 import dev.maxim_v.weather_app.domain.entity.WeatherType
-import dev.maxim_v.weather_app.presentation.selectIcon
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
+import dev.maxim_v.weather_app.util.selectIcon
 
 @Composable
 fun DailyTempCard(
@@ -78,7 +78,7 @@ fun DailyTempCard(
 
 @Preview
 @Composable
-fun DailyTempCardPreview() {
+private fun DailyTempCardPreview() {
     WeatherForecastTheme {
         DailyTempCard(
             dailyForecast = DailyForecast(

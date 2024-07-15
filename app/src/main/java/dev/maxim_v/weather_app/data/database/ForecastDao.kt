@@ -25,13 +25,13 @@ interface ForecastDao {
     @Query("SELECT * FROM current_forecast LIMIT 1")
     suspend fun getCurrentForecast(): CurrentForecastDbModel
 
-    @Query("SELECT * FROM hourly_forecast")
-    suspend fun getHourlyForecast(): List<HourlyForecastDbModel>
+    @Query("SELECT * FROM hourly_forecast WHERE timestamp > :time LIMIT 24")
+    suspend fun getHourlyForecast(time: Long): List<HourlyForecastDbModel>
 
     @Query("DELETE FROM hourly_forecast")
     suspend fun clearHourlyForecast()
 
-    @Query("SELECT * FROM daily_forecast WHERE timestamp > :time - $ONE_DAY_OFFSET")
+    @Query("SELECT * FROM daily_forecast WHERE timestamp > :time LIMIT 14")
     suspend fun getDailyForecast(time: Long): List<DailyForecastDbModel>
 
     @Query("DELETE FROM daily_forecast")

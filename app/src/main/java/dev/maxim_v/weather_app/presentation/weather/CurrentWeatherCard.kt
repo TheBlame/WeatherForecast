@@ -24,9 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
-import dev.maxim_v.weather_app.presentation.selectIcon
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
+import dev.maxim_v.weather_app.util.selectIcon
 
 @Composable
 fun CurrentWeatherCard(
@@ -116,7 +116,7 @@ fun IconWithText(icon: Int, text: String) {
 
 @Preview
 @Composable
-fun CurrentWeatherCardPreview() {
+private fun CurrentWeatherCardPreview() {
     WeatherForecastTheme {
         CurrentWeatherCard(
             modifier = Modifier.fillMaxWidth(),

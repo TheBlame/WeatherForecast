@@ -2,6 +2,7 @@ package dev.maxim_v.weather_app.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.CURRENT
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.DAILY
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.HOURLY
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase
 ) : ViewModel() {

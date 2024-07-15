@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.maxim_v.weather_app.data.WeatherRepositoryImpl
 import dev.maxim_v.weather_app.data.database.AppDatabase
+import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
 import dev.maxim_v.weather_app.data.network.api.ForecastApi
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import javax.inject.Singleton
@@ -32,6 +33,12 @@ interface DataModule {
         @Provides
         fun provideForecastApi(): ForecastApi {
             return ForecastApi.create()
+        }
+
+        @Singleton
+        @Provides
+        fun provideGeocoder(application: Application): GeocoderSource {
+            return GeocoderSource(application)
         }
     }
 }

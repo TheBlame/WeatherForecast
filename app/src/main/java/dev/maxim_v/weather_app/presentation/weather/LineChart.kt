@@ -80,9 +80,9 @@ fun LineChart(
         val valueTextPadding = 4.dp.toPx()
         val timeTextPadding = 16.dp.toPx()
         val graphBottomLinePadding = 64.dp.toPx()
-        val graphValueTopPadding = 64.dp.toPx()
+        val graphValueTopPadding = 32.dp.toPx()
         val graphValueBottomPadding = 128.dp.toPx()
-        val contentHorizontalPadding = 48.dp.toPx()
+        val contentHorizontalPadding = 32.dp.toPx()
         val iconPadding = 44.dp.toPx()
         val xStep = size.width / (data.size - 1) - contentHorizontalPadding * 2 / (data.size - 1)
         val chartCoordinates = WeatherChartCoordinateProvider(
@@ -197,7 +197,7 @@ fun LineChart(
 
 @Preview
 @Composable
-fun PreviewChart() {
+private fun PreviewChart() {
     val data = listOf(
         HourlyForecast("00:00", -10, WeatherType.entries.toTypedArray().random()),
         HourlyForecast("01:00", 0, WeatherType.entries.toTypedArray().random()),

@@ -23,7 +23,8 @@ interface ForecastApi {
         @Query("daily") dailyArgs: @JvmSuppressWildcards List<Daily>?,
         @Query("temperature_unit") unit: TemperatureUnit,
         @Query("timeformat") timeFormat:String = "unixtime",
-        @Query("timezone") timeZone: String = "auto"
+        @Query("timezone") timeZone: String = "auto",
+        @Query("forecast_days") forecastDays: Int = 16
     ): ForecastDto
 
     companion object {
