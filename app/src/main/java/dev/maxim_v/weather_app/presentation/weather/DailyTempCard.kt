@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,11 +32,13 @@ import dev.maxim_v.weather_app.util.selectIcon
 fun DailyTempCard(
     modifier: Modifier = Modifier,
     colors: CardColors = CardDefaults.cardColors(),
+    elevation: CardElevation = CardDefaults.cardElevation(),
     dailyForecast: DailyForecast
 ) {
     Card(
         modifier = modifier,
-        colors = colors
+        colors = colors,
+        elevation = elevation
     ) {
         Column(
             modifier = Modifier.padding(4.dp),

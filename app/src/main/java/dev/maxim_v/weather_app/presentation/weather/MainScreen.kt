@@ -43,6 +43,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainScreenViewModel = v
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     ),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
                     currentWeather = currentState.data[CURRENT] as WeatherModel.CurrentSample
                 )
                 LineChart(
@@ -73,6 +74,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainScreenViewModel = v
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                             ),
+                            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
                             dailyForecast = item
                         )
                     }
