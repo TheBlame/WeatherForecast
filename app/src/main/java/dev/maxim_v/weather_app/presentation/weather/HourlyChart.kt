@@ -34,7 +34,7 @@ import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 
 @Composable
-fun LineChart(
+fun HourlyChart(
     modifier: Modifier = Modifier,
     data: List<HourlyForecast>,
     mainGraphLineColor: Color,
@@ -42,8 +42,6 @@ fun LineChart(
     secondaryGraphLineAlpha: Float,
     graphGradientColor: Color,
     graphGradientAlpha: Float,
-    textColor: Color,
-    timeTextColor: Color,
     valueTextStyle: TextStyle = LocalTextStyle.current,
     timeTextStyle: TextStyle = LocalTextStyle.current
 ) {
@@ -110,7 +108,7 @@ fun LineChart(
             drawText(
                 textMeasurer = textMeasurer,
                 text = hour,
-                style = timeTextStyle.copy(color = timeTextColor),
+                style = timeTextStyle,
                 topLeft = Offset(
                     contentHorizontalPadding + (index * xStep - measuredText.size.width / 2f),
                     size.height - measuredText.size.height - timeTextPadding
@@ -156,8 +154,8 @@ fun LineChart(
 
                 drawText(
                     textMeasurer = textMeasurer,
-                    text = data[index].temp.toString(),
-                    style = valueTextStyle.copy(color = textColor),
+                    text = coordinate.yValue,
+                    style = valueTextStyle,
                     topLeft = Offset(
                         coordinate.x - measuredText.size.width / 2f,
                         coordinate.y - measuredText.size.height - valueTextPadding
@@ -220,7 +218,7 @@ private fun PreviewChart() {
     )
 
     WeatherForecastTheme(darkTheme = true) {
-        LineChart(
+        HourlyChart(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background)
                 .horizontalScroll(rememberScrollState())
@@ -232,10 +230,8 @@ private fun PreviewChart() {
             secondaryGraphLineAlpha = 0.5f,
             graphGradientColor = MaterialTheme.colorScheme.inversePrimary,
             graphGradientAlpha = 0.5f,
-            textColor = MaterialTheme.colorScheme.onBackground,
-            timeTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            valueTextStyle = ReplacementTheme.typography.small,
-            timeTextStyle = ReplacementTheme.typography.extraSmall
+            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onBackground),
+            timeTextStyle = ReplacementTheme.typography.extraSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
     }
 }

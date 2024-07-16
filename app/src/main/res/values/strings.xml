@@ -7,4 +7,6 @@
     <string name="apparent">Feels like: %1$s°</string>
     <string name="min">min</string>
     <string name="max">max</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
 </resources>

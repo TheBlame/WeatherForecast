@@ -45,8 +45,8 @@ fun DailyForecastDbModel?.toDaily(): DailyForecast {
     return if (this != null) {
         DailyForecast(
             date = mapTimeStampToDay(this.timestamp * MILLIS_IN_SECONDS),
-            minTemp = this.minTemp.roundToInt().toString(),
-            maxTemp = this.maxTemp.roundToInt().toString(),
+            minTemp = this.minTemp.roundToInt(),
+            maxTemp = this.maxTemp.roundToInt(),
             weatherType = this.weatherCode.toWeatherType()
         )
     } else {

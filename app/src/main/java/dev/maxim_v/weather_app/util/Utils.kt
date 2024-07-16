@@ -1,5 +1,11 @@
 package dev.maxim_v.weather_app.util
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.WeatherType
 import java.text.SimpleDateFormat
@@ -13,7 +19,7 @@ fun mapTimeStampToDate(timeStamp: Long): String {
 
 fun mapTimeStampToDay(timeStamp: Long): String {
     val date = Date(timeStamp)
-    return SimpleDateFormat("d", Locale.getDefault()).format(date)
+    return SimpleDateFormat("dd.MM", Locale.getDefault()).format(date)
 }
 
 fun mapTimeStampToHours(timeStamp: Long): String {
@@ -29,4 +35,26 @@ fun selectIcon(weatherType: WeatherType): Int {
         WeatherType.THUNDER -> R.drawable.rainthunder
         WeatherType.CLOUDY -> R.drawable.partlycloudy
     }
+}
+
+fun DrawScope.measureAndDrawText(
+    textMeasurer: TextMeasurer,
+    text: String,
+    topLeft: Offset = Offset.Zero,
+    style: TextStyle = TextStyle.Default
+) {
+    val textLayoutResult = textMeasurer.measure(
+        text = AnnotatedString(text),
+        style = style
+    )
+
+    drawText(
+        textMeasurer = textMeasurer,
+        text = text,
+        style = style,
+        topLeft = Offset(
+            topLeft.x - textLayoutResult.size.width / 2f,
+            topLeft.y - textLayoutResult.size.height / 2f
+        )
+    )
 }

@@ -92,8 +92,8 @@ private fun DailyTempCardPreview() {
         DailyTempCard(
             dailyForecast = DailyForecast(
                 date = "16",
-                minTemp = "20",
-                maxTemp = "30",
+                minTemp = 20,
+                maxTemp = 30,
                 weatherType = WeatherType.CLEAR
             )
         )

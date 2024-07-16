@@ -14,8 +14,7 @@ sealed class ChartCoordinate {
 
     data class DailyChartCoordinate(
         val x: Float,
-        val minX: Float,
-        val minY: Float,
+        val y: Float,
         val xValue: String,
         val minXValue: String,
         val maxXValue: String,

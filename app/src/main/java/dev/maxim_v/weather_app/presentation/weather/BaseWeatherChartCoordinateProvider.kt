@@ -1,14 +1,32 @@
 package dev.maxim_v.weather_app.presentation.weather
 
-import androidx.compose.ui.geometry.Offset
 import kotlin.math.abs
 
-abstract class BaseWeatherChartCoordinateProvider<T : ChartCoordinate>(
-    innerList: Collection<T>
-) : Collection<T> by innerList {
+abstract class BaseWeatherChartCoordinateProvider<T : ChartCoordinate> : Collection<T> {
 
-    operator fun get(index: Int): Offset {
-        return this[index]
+    abstract val innerList: List<T>
+
+    operator fun get(index: Int): T {
+        return innerList[index]
+    }
+
+    override val size: Int
+        get() = innerList.size
+
+    override fun isEmpty(): Boolean {
+        return innerList.isEmpty()
+    }
+
+    override fun iterator(): Iterator<T> {
+        return innerList.iterator()
+    }
+
+    override fun containsAll(elements: Collection<T>): Boolean {
+        return innerList.containsAll(elements)
+    }
+
+    override fun contains(element: T): Boolean {
+        return innerList.contains(element)
     }
 
     protected companion object {
