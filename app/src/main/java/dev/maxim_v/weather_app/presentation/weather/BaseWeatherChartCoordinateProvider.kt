@@ -3,9 +3,9 @@ package dev.maxim_v.weather_app.presentation.weather
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.abs
 
-abstract class BaseWeatherChartCoordinateProvider(
-    innerList: Collection<WeatherChartCoordinate>
-) : Collection<WeatherChartCoordinate> by innerList {
+abstract class BaseWeatherChartCoordinateProvider<T : ChartCoordinate>(
+    innerList: Collection<T>
+) : Collection<T> by innerList {
 
     operator fun get(index: Int): Offset {
         return this[index]
