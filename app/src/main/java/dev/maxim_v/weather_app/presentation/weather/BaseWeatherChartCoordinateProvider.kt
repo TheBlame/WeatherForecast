@@ -1,33 +1,15 @@
 package dev.maxim_v.weather_app.presentation.weather
 
-import dev.maxim_v.weather_app.domain.entity.HourlyForecast
+import androidx.compose.ui.geometry.Offset
 import kotlin.math.abs
 
 abstract class BaseWeatherChartCoordinateProvider(
-    data: List<HourlyForecast>,
-    yMin: Float,
-    yMax: Float,
-    horizontalPadding: Float,
-    xStep: Float,
-    weightedData: List<Float>,
-    innerList: Collection<WeatherChartCoordinate> = List(data.size) { index ->
-        val maxValue = weightedData.maxOrNull() ?: 0f
-        val minValue = weightedData.minOrNull() ?: 0f
-        WeatherChartCoordinate(
-            x = horizontalPadding + index * xStep,
-            y = calcCoordinate(
-                yMin,
-                yMax,
-                minValue,
-                maxValue,
-                weightedData[index]
-            ),
-            xValue = data[index].time,
-            yValue = data[index].temp.toString(),
-            weatherType = data[index].weatherType
-        )
-    }
+    innerList: Collection<WeatherChartCoordinate>
 ) : Collection<WeatherChartCoordinate> by innerList {
+
+    operator fun get(index: Int): Offset {
+        return this[index]
+    }
 
     protected companion object {
 

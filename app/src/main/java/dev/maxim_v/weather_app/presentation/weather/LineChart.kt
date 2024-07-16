@@ -85,7 +85,7 @@ fun LineChart(
         val contentHorizontalPadding = 32.dp.toPx()
         val iconPadding = 44.dp.toPx()
         val xStep = size.width / (data.size - 1) - contentHorizontalPadding * 2 / (data.size - 1)
-        val chartCoordinates = WeatherChartCoordinateProvider(
+        val chartCoordinates = HourlyChartCoordinateProvider(
             data,
             graphValueTopPadding,
             size.height - graphValueBottomPadding,
