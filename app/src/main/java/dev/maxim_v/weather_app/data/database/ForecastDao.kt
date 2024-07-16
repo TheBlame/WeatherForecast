@@ -31,8 +31,8 @@ interface ForecastDao {
     @Query("DELETE FROM hourly_forecast")
     suspend fun clearHourlyForecast()
 
-    @Query("SELECT * FROM daily_forecast WHERE timestamp > :time LIMIT 14")
-    suspend fun getDailyForecast(time: Long): List<DailyForecastDbModel>
+    @Query("SELECT * FROM daily_forecast LIMIT 14")
+    suspend fun getDailyForecast(): List<DailyForecastDbModel>
 
     @Query("DELETE FROM daily_forecast")
     suspend fun clearDailyForecast()

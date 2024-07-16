@@ -103,7 +103,7 @@ class WeatherRepositoryImpl @Inject constructor(
 
         val current = db.forecastDao().getCurrentForecast()
         val hourly = db.forecastDao().getHourlyForecast(System.currentTimeMillis() / 1000)
-        val daily = db.forecastDao().getDailyForecast(System.currentTimeMillis() / 1000)
+        val daily = db.forecastDao().getDailyForecast()
         val location = geocoderSource.getLocationName(current.latitude, current.longitude)
 
         emit(
