@@ -17,10 +17,10 @@ sealed class WeatherModel {
     ) : WeatherModel()
 
     data class DailySample(
-        val sample: List<DailyForecast> = listOf()
+        val data: List<DailyForecast> = listOf()
     ) : WeatherModel()
 
     data class HourlySample(
-        val sample: List<HourlyForecast> = listOf()
+        val data: List<HourlyForecast> = listOf()
     ) : WeatherModel()
 }
