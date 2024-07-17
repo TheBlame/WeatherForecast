@@ -98,7 +98,7 @@ fun CurrentWeatherCard(
                 IconWithText(
                     icon = R.drawable.weather_windy,
                     text = stringResource(
-                        id = R.string.wind_speed,
+                        id = R.string.ms,
                         currentWeather.windSpeed,
                         currentWeather.windDirection
                     )

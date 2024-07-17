@@ -4,6 +4,7 @@ import dev.maxim_v.weather_app.data.network.queryparams.Current
 import dev.maxim_v.weather_app.data.network.queryparams.Daily
 import dev.maxim_v.weather_app.data.network.queryparams.Hourly
 import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnit
+import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnit
 
 data class ForecastRequest(
     val latitude: Double,
@@ -11,6 +12,7 @@ data class ForecastRequest(
     val currentArgs: List<Current>?,
     val hourlyArgs: List<Hourly>?,
     val dailyArgs: List<Daily>?,
-    val unit: TemperatureUnit,
+    val temperatureUnit: TemperatureUnit,
+    val windSpeedUnit: WindSpeedUnit,
     val days: Int
 )

@@ -5,6 +5,7 @@ import dev.maxim_v.weather_app.data.network.queryparams.Current
 import dev.maxim_v.weather_app.data.network.queryparams.Daily
 import dev.maxim_v.weather_app.data.network.queryparams.Hourly
 import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnit
+import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnit
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -21,7 +22,8 @@ interface ForecastApi {
         @Query("current") currentArgs: @JvmSuppressWildcards List<Current>?,
         @Query("hourly") hourlyArgs: @JvmSuppressWildcards List<Hourly>?,
         @Query("daily") dailyArgs: @JvmSuppressWildcards List<Daily>?,
-        @Query("temperature_unit") unit: TemperatureUnit,
+        @Query("temperature_unit") tempUnit: TemperatureUnit,
+        @Query("wind_speed_unit") windSpeedUnit: WindSpeedUnit,
         @Query("timeformat") timeFormat:String = "unixtime",
         @Query("timezone") timeZone: String = "auto",
         @Query("forecast_days") forecastDays: Int

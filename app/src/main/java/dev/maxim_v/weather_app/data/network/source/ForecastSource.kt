@@ -17,7 +17,8 @@ class ForecastSource @Inject constructor(private val forecastApi: ForecastApi) {
             currentArgs = request.currentArgs,
             hourlyArgs = request.hourlyArgs,
             dailyArgs = request.dailyArgs,
-            unit = request.unit,
+            tempUnit = request.temperatureUnit,
+            windSpeedUnit = request.windSpeedUnit,
             forecastDays = request.days
         ) }
 

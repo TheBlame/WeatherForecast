@@ -1,9 +1,11 @@
 package dev.maxim_v.weather_app.data
 
+import androidx.datastore.core.DataStore
 import dev.maxim_v.weather_app.data.database.AppDatabase
 import dev.maxim_v.weather_app.data.database.dbmodels.toCurrent
 import dev.maxim_v.weather_app.data.database.dbmodels.toDaily
 import dev.maxim_v.weather_app.data.database.dbmodels.toHourly
+import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
 import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
@@ -13,7 +15,6 @@ import dev.maxim_v.weather_app.data.network.dto.toHourlyForecastDbModelList
 import dev.maxim_v.weather_app.data.network.queryparams.Current
 import dev.maxim_v.weather_app.data.network.queryparams.Daily
 import dev.maxim_v.weather_app.data.network.queryparams.Hourly
-import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnit
 import dev.maxim_v.weather_app.data.network.source.ForecastSource
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
 import dev.maxim_v.weather_app.domain.entity.WeatherSample
@@ -23,6 +24,7 @@ import dev.maxim_v.weather_app.domain.entity.WeatherSample.HOURLY
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,20 +32,21 @@ import javax.inject.Inject
 class WeatherRepositoryImpl @Inject constructor(
     private val forecastSource: ForecastSource,
     private val geocoderSource: GeocoderSource,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val ds: DataStore<UserPref>
 ) : WeatherRepository {
 
     override suspend fun getWeather(vararg weatherSample: WeatherSample): Flow<Map<WeatherSample, WeatherModel>> =
         if (weatherSample.contains(HOURLY)) {
-            fullFlow()
+            fullFlow(getPref())
         } else {
-            onlyCurrentFlow()
+            onlyCurrentFlow(getPref())
         }
 
-    private fun onlyCurrentFlow() = flow {
+    private fun onlyCurrentFlow(pref: UserPref) = flow {
         val request = ForecastRequest(
-            latitude = 57.1522,
-            longitude = 65.5272,
+            latitude = pref.location.latitude,
+            longitude = pref.location.longitude,
             currentArgs = listOf(
                 Current.TEMPERATURE,
                 Current.CODE,
@@ -54,7 +57,8 @@ class WeatherRepositoryImpl @Inject constructor(
             ),
             hourlyArgs = null,
             dailyArgs = null,
-            unit = TemperatureUnit.CELSIUS,
+            temperatureUnit = pref.tempUnit,
+            windSpeedUnit = pref.windSpeedUnit,
             days = 1
         )
         val result = forecastSource.getForecast(request)
@@ -70,10 +74,10 @@ class WeatherRepositoryImpl @Inject constructor(
         emit(mapOf(CURRENT to current.toCurrent(location)))
     }
 
-    private fun fullFlow() = flow {
+    private fun fullFlow(pref: UserPref) = flow {
         val request = ForecastRequest(
-            latitude = 57.1522,
-            longitude = 65.5272,
+            latitude = pref.location.latitude,
+            longitude = pref.location.longitude,
             currentArgs = listOf(
                 Current.TEMPERATURE,
                 Current.CODE,
@@ -84,7 +88,8 @@ class WeatherRepositoryImpl @Inject constructor(
             ),
             hourlyArgs = listOf(Hourly.TEMPERATURE, Hourly.CODE),
             dailyArgs = listOf(Daily.MAX_TEMPERATURE, Daily.MIN_TEMPERATURE, Daily.CODE),
-            unit = TemperatureUnit.CELSIUS,
+            temperatureUnit = pref.tempUnit,
+            windSpeedUnit = pref.windSpeedUnit,
             days = 15
         )
         val result = forecastSource.getForecast(request)
@@ -108,10 +113,14 @@ class WeatherRepositoryImpl @Inject constructor(
 
         emit(
             mapOf(
-                CURRENT to current.toCurrent(location),
+                CURRENT to current.toCurrent(pref.location.city),
                 HOURLY to WeatherModel.HourlySample(hourly.map { it.toHourly() }),
                 DAILY to WeatherModel.DailySample(daily.map { it.toDaily() })
             )
         )
+    }
+
+    private suspend fun getPref(): UserPref {
+        return ds.data.first()
     }
 }
