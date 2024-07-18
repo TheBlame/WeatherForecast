@@ -1,8 +1,10 @@
 package dev.maxim_v.weather_app.presentation.viewmodels
 
+import androidx.compose.runtime.Immutable
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
 import dev.maxim_v.weather_app.domain.entity.WeatherSample
 
+@Immutable
 sealed class MainScreenState {
 
     data object Initial : MainScreenState()
