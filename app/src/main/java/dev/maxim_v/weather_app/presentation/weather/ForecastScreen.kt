@@ -28,11 +28,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForecastScreen(modifier: Modifier = Modifier, viewModel: MainScreenViewModel = viewModel()) {
-    val screenState = viewModel.mainScreenState.collectAsState(MainScreenState.Initial)
+    val screenState = viewModel.mainScreenState.collectAsStateWithLifecycle(MainScreenState.Initial)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
