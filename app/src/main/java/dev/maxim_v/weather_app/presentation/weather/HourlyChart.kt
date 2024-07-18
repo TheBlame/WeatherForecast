@@ -48,31 +48,7 @@ fun HourlyChart(
     val transparentGraphColor = graphGradientColor.copy(alpha = graphGradientAlpha)
     val textMeasurer = rememberTextMeasurer()
     val iconSize = 64
-
-    val clearImage =
-        LocalContext.current.getDrawable(R.drawable.sunny)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val cloudyImage =
-        LocalContext.current.getDrawable(R.drawable.partlycloudy)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val rainImage =
-        LocalContext.current.getDrawable(R.drawable.rainy)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val thunderImage =
-        LocalContext.current.getDrawable(R.drawable.rainthunder)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val snowImage =
-        LocalContext.current.getDrawable(R.drawable.snowy)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
+    val context = LocalContext.current
 
     Canvas(modifier = modifier) {
         val valueTextPadding = 4.dp.toPx()
@@ -119,11 +95,21 @@ fun HourlyChart(
         val graphPath = Path().apply {
             chartCoordinates.forEachIndexed { index, coordinate ->
                 val imageToDraw = when (coordinate.weatherType) {
-                    WeatherType.CLEAR -> clearImage
-                    WeatherType.SNOW -> snowImage
-                    WeatherType.RAIN -> rainImage
-                    WeatherType.THUNDER -> thunderImage
-                    WeatherType.CLOUDY -> cloudyImage
+                    WeatherType.CLEAR -> context.getDrawable(R.drawable.sunny)?.toBitmap(iconSize, iconSize)
+                        ?.asImageBitmap()
+                        ?: ImageBitmap(0, 0)
+                    WeatherType.SNOW -> context.getDrawable(R.drawable.partlycloudy)?.toBitmap(iconSize, iconSize)
+                        ?.asImageBitmap()
+                        ?: ImageBitmap(0, 0)
+                    WeatherType.RAIN -> context.getDrawable(R.drawable.rainy)?.toBitmap(iconSize, iconSize)
+                        ?.asImageBitmap()
+                        ?: ImageBitmap(0, 0)
+                    WeatherType.THUNDER -> context.getDrawable(R.drawable.rainthunder)?.toBitmap(iconSize, iconSize)
+                        ?.asImageBitmap()
+                        ?: ImageBitmap(0, 0)
+                    WeatherType.CLOUDY -> context.getDrawable(R.drawable.snowy)?.toBitmap(iconSize, iconSize)
+                        ?.asImageBitmap()
+                        ?: ImageBitmap(0, 0)
                 }
 
                 if (index == 0) {
@@ -145,6 +131,7 @@ fun HourlyChart(
                     center = Offset(coordinate.x, coordinate.y)
                 )
 
+                imageToDraw.prepareToDraw()
                 drawImage(
                     imageToDraw,
                     Offset(coordinate.x - iconSize / 2, size.height - iconSize / 2 - iconPadding)

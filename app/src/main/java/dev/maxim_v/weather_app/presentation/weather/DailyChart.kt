@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,34 +39,7 @@ fun DailyChart(
 ) {
     val textMeasurer = rememberTextMeasurer()
     val iconSize = 64
-
-    val clearImage =
-        LocalContext.current.getDrawable(R.drawable.sunny)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val cloudyImage =
-        LocalContext.current.getDrawable(R.drawable.partlycloudy)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val rainImage =
-        LocalContext.current.getDrawable(R.drawable.rainy)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val thunderImage =
-        LocalContext.current.getDrawable(R.drawable.rainthunder)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val snowImage =
-        LocalContext.current.getDrawable(R.drawable.snowy)?.toBitmap(iconSize, iconSize)
-            ?.asImageBitmap()
-            ?: ImageBitmap(0, 0)
-
-    val todayText = stringResource(id = R.string.today)
-    val tomorrowText = stringResource(id = R.string.tomorrow)
+    val context = LocalContext.current
 
     Canvas(modifier = modifier) {
         val valueTextPadding = 12.dp.toPx()
@@ -88,16 +60,26 @@ fun DailyChart(
 
         chartCoordinates.forEachIndexed { index, coordinate ->
             val imageToDraw = when (coordinate.weatherType) {
-                WeatherType.CLEAR -> clearImage
-                WeatherType.SNOW -> snowImage
-                WeatherType.RAIN -> rainImage
-                WeatherType.THUNDER -> thunderImage
-                WeatherType.CLOUDY -> cloudyImage
+                WeatherType.CLEAR -> context.getDrawable(R.drawable.sunny)?.toBitmap(iconSize, iconSize)
+                    ?.asImageBitmap()
+                    ?: ImageBitmap(0, 0)
+                WeatherType.SNOW -> context.getDrawable(R.drawable.partlycloudy)?.toBitmap(iconSize, iconSize)
+                    ?.asImageBitmap()
+                    ?: ImageBitmap(0, 0)
+                WeatherType.RAIN -> context.getDrawable(R.drawable.rainy)?.toBitmap(iconSize, iconSize)
+                    ?.asImageBitmap()
+                    ?: ImageBitmap(0, 0)
+                WeatherType.THUNDER -> context.getDrawable(R.drawable.rainthunder)?.toBitmap(iconSize, iconSize)
+                    ?.asImageBitmap()
+                    ?: ImageBitmap(0, 0)
+                WeatherType.CLOUDY -> context.getDrawable(R.drawable.snowy)?.toBitmap(iconSize, iconSize)
+                    ?.asImageBitmap()
+                    ?: ImageBitmap(0, 0)
             }
 
             val xValueText = when(index) {
-                0 -> todayText
-                1 -> tomorrowText
+                0 -> context.getString(R.string.today)
+                1 -> context.getString(R.string.tomorrow)
                 else -> coordinate.xValue
             }
 
@@ -130,6 +112,7 @@ fun DailyChart(
                 cap = StrokeCap.Round
             )
 
+            imageToDraw.prepareToDraw()
             drawImage(
                 imageToDraw,
                 Offset(coordinate.x - iconSize / 2, size.height - iconSize / 2 - iconPadding)
