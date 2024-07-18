@@ -10,7 +10,7 @@ class GeocoderSource(application: Application) {
 
     suspend fun getLocationName(latitude: Double, longitude: Double): String {
         return withContext(Dispatchers.IO) {
-            geocoder.getFromLocation(latitude, longitude, 1)?.first()?.locality ?: ""
+            geocoder.getFromLocation(latitude, longitude, 1)?.firstOrNull()?.locality ?: ""
         }
     }
 }

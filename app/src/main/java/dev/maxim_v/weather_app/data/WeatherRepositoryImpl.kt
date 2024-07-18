@@ -43,11 +43,16 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun getLocationWithGps() {
         val newLocation = locationService.getLocation().first()
-        if (locationService.permission.first()) {
-            ds.updateData {
-                val newCity = geocoderSource.getLocationName(newLocation.latitude, newLocation.longitude)
-                it.copy(userLocation = UserLocation(latitude = newLocation.latitude, longitude = newLocation.longitude, city = newCity))
-            }
+        ds.updateData {
+            val newCity =
+                geocoderSource.getLocationName(newLocation.latitude, newLocation.longitude)
+            it.copy(
+                userLocation = UserLocation(
+                    latitude = newLocation.latitude,
+                    longitude = newLocation.longitude,
+                    city = newCity
+                )
+            )
         }
     }
 
@@ -102,7 +107,11 @@ class WeatherRepositoryImpl @Inject constructor(
                 CurrentParams.WIND_DIRECTION
             ),
             hourlyParams = listOf(HourlyParams.TEMPERATURE, HourlyParams.CODE),
-            dailyParams = listOf(DailyParams.MAX_TEMPERATURE, DailyParams.MIN_TEMPERATURE, DailyParams.CODE),
+            dailyParams = listOf(
+                DailyParams.MAX_TEMPERATURE,
+                DailyParams.MIN_TEMPERATURE,
+                DailyParams.CODE
+            ),
             temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
             windSpeedUnitParam = WindSpeedUnitParams.getFromPref(pref),
             days = 15
