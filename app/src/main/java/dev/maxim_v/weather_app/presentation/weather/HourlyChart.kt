@@ -98,7 +98,7 @@ fun HourlyChart(
                     WeatherType.CLEAR -> context.getDrawable(R.drawable.sunny)?.toBitmap(iconSize, iconSize)
                         ?.asImageBitmap()
                         ?: ImageBitmap(0, 0)
-                    WeatherType.SNOW -> context.getDrawable(R.drawable.partlycloudy)?.toBitmap(iconSize, iconSize)
+                    WeatherType.SNOW -> context.getDrawable(R.drawable.snowy)?.toBitmap(iconSize, iconSize)
                         ?.asImageBitmap()
                         ?: ImageBitmap(0, 0)
                     WeatherType.RAIN -> context.getDrawable(R.drawable.rainy)?.toBitmap(iconSize, iconSize)
@@ -107,7 +107,7 @@ fun HourlyChart(
                     WeatherType.THUNDER -> context.getDrawable(R.drawable.rainthunder)?.toBitmap(iconSize, iconSize)
                         ?.asImageBitmap()
                         ?: ImageBitmap(0, 0)
-                    WeatherType.CLOUDY -> context.getDrawable(R.drawable.snowy)?.toBitmap(iconSize, iconSize)
+                    WeatherType.CLOUDY -> context.getDrawable(R.drawable.partlycloudy)?.toBitmap(iconSize, iconSize)
                         ?.asImageBitmap()
                         ?: ImageBitmap(0, 0)
                 }
