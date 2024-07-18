@@ -1,6 +1,6 @@
 package dev.maxim_v.weather_app.data.network.queryparams
 
-enum class Current(private val param: String) {
+enum class CurrentParams(private val param: String) {
     TEMPERATURE("temperature_2m"),
     HUMIDITY("relative_humidity_2m"),
     APPARENT("apparent_temperature"),

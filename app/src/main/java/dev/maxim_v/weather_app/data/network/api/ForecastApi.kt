@@ -1,17 +1,18 @@
 package dev.maxim_v.weather_app.data.network.api
 
 import dev.maxim_v.weather_app.data.network.dto.ForecastDto
-import dev.maxim_v.weather_app.data.network.queryparams.Current
-import dev.maxim_v.weather_app.data.network.queryparams.Daily
-import dev.maxim_v.weather_app.data.network.queryparams.Hourly
-import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnit
-import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnit
+import dev.maxim_v.weather_app.data.network.queryparams.CurrentParams
+import dev.maxim_v.weather_app.data.network.queryparams.DailyParams
+import dev.maxim_v.weather_app.data.network.queryparams.HourlyParams
+import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnitParams
+import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnitParams
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 interface ForecastApi {
 
@@ -19,11 +20,11 @@ interface ForecastApi {
     suspend fun loadForecast(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
-        @Query("current") currentArgs: @JvmSuppressWildcards List<Current>?,
-        @Query("hourly") hourlyArgs: @JvmSuppressWildcards List<Hourly>?,
-        @Query("daily") dailyArgs: @JvmSuppressWildcards List<Daily>?,
-        @Query("temperature_unit") tempUnit: TemperatureUnit,
-        @Query("wind_speed_unit") windSpeedUnit: WindSpeedUnit,
+        @Query("current") currentParams: @JvmSuppressWildcards List<CurrentParams>?,
+        @Query("hourly") hourlyParams: @JvmSuppressWildcards List<HourlyParams>?,
+        @Query("daily") dailyParams: @JvmSuppressWildcards List<DailyParams>?,
+        @Query("temperature_unit") tempUnit: TemperatureUnitParams,
+        @Query("wind_speed_unit") windSpeedUnitParam: WindSpeedUnitParams,
         @Query("timeformat") timeFormat:String = "unixtime",
         @Query("timezone") timeZone: String = "auto",
         @Query("forecast_days") forecastDays: Int
@@ -34,6 +35,9 @@ interface ForecastApi {
         private const val BASE_URL = "https://api.open-meteo.com/v1/"
 
         private val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS) // Change it as per your requirement
+            .readTimeout(30, TimeUnit.SECONDS)// Change it as per your requirement
+            .writeTimeout(30, TimeUnit.SECONDS)// Change it as per your requirement
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })

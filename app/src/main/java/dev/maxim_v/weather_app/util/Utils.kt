@@ -1,11 +1,15 @@
 package dev.maxim_v.weather_app.util
 
+import android.Manifest
+import android.content.Context
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.WeatherType
 import java.text.SimpleDateFormat
@@ -58,3 +62,13 @@ fun DrawScope.measureAndDrawText(
         )
     )
 }
+
+fun checkLocationPermissions(context: Context) =
+    (ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PERMISSION_GRANTED)

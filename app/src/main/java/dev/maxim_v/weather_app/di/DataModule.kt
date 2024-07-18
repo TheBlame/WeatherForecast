@@ -14,6 +14,7 @@ import dev.maxim_v.weather_app.data.database.AppDatabase
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserPrefSerializer
 import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
+import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastApi
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +61,12 @@ interface DataModule {
                 corruptionHandler = null,
                 scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
             )
+        }
+
+        @Singleton
+        @Provides
+        fun provideLocationService(application: Application): LocationService {
+            return LocationService(application)
         }
     }
 }

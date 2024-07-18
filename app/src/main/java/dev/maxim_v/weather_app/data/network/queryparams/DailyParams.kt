@@ -1,7 +1,8 @@
 package dev.maxim_v.weather_app.data.network.queryparams
 
-enum class Hourly(private val param: String) {
-    TEMPERATURE("temperature_2m"),
+enum class DailyParams(private val param: String) {
+    MIN_TEMPERATURE("temperature_2m_min"),
+    MAX_TEMPERATURE("temperature_2m_max"),
     CODE("weather_code");
 
     override fun toString(): String {

@@ -14,11 +14,11 @@ class ForecastSource @Inject constructor(private val forecastApi: ForecastApi) {
         wrapRetrofitExceptions { forecastApi.loadForecast(
             latitude = request.latitude,
             longitude = request.longitude,
-            currentArgs = request.currentArgs,
-            hourlyArgs = request.hourlyArgs,
-            dailyArgs = request.dailyArgs,
-            tempUnit = request.temperatureUnit,
-            windSpeedUnit = request.windSpeedUnit,
+            currentParams = request.currentParams,
+            hourlyParams = request.hourlyParams,
+            dailyParams = request.dailyParams,
+            tempUnit = request.temperatureUnitParam,
+            windSpeedUnitParam = request.windSpeedUnitParam,
             forecastDays = request.days
         ) }
 

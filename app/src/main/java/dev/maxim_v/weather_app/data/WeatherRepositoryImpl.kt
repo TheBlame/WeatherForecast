@@ -5,16 +5,20 @@ import dev.maxim_v.weather_app.data.database.AppDatabase
 import dev.maxim_v.weather_app.data.database.dbmodels.toCurrent
 import dev.maxim_v.weather_app.data.database.dbmodels.toDaily
 import dev.maxim_v.weather_app.data.database.dbmodels.toHourly
+import dev.maxim_v.weather_app.data.datastore.UserLocation
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
+import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
 import dev.maxim_v.weather_app.data.network.dto.toCurrentForecastDbModel
 import dev.maxim_v.weather_app.data.network.dto.toDailyForecastDbModelList
 import dev.maxim_v.weather_app.data.network.dto.toHourlyForecastDbModelList
-import dev.maxim_v.weather_app.data.network.queryparams.Current
-import dev.maxim_v.weather_app.data.network.queryparams.Daily
-import dev.maxim_v.weather_app.data.network.queryparams.Hourly
+import dev.maxim_v.weather_app.data.network.queryparams.CurrentParams
+import dev.maxim_v.weather_app.data.network.queryparams.DailyParams
+import dev.maxim_v.weather_app.data.network.queryparams.HourlyParams
+import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnitParams
+import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnitParams
 import dev.maxim_v.weather_app.data.network.source.ForecastSource
 import dev.maxim_v.weather_app.domain.entity.WeatherModel
 import dev.maxim_v.weather_app.domain.entity.WeatherSample
@@ -33,8 +37,19 @@ class WeatherRepositoryImpl @Inject constructor(
     private val forecastSource: ForecastSource,
     private val geocoderSource: GeocoderSource,
     private val db: AppDatabase,
-    private val ds: DataStore<UserPref>
+    private val ds: DataStore<UserPref>,
+    private val locationService: LocationService
 ) : WeatherRepository {
+
+    override suspend fun getLocationWithGps() {
+        val newLocation = locationService.getLocation().first()
+        if (locationService.permission.first()) {
+            ds.updateData {
+                val newCity = geocoderSource.getLocationName(newLocation.latitude, newLocation.longitude)
+                it.copy(userLocation = UserLocation(latitude = newLocation.latitude, longitude = newLocation.longitude, city = newCity))
+            }
+        }
+    }
 
     override suspend fun getWeather(vararg weatherSample: WeatherSample): Flow<Map<WeatherSample, WeatherModel>> =
         if (weatherSample.contains(HOURLY)) {
@@ -45,20 +60,20 @@ class WeatherRepositoryImpl @Inject constructor(
 
     private fun onlyCurrentFlow(pref: UserPref) = flow {
         val request = ForecastRequest(
-            latitude = pref.location.latitude,
-            longitude = pref.location.longitude,
-            currentArgs = listOf(
-                Current.TEMPERATURE,
-                Current.CODE,
-                Current.APPARENT,
-                Current.HUMIDITY,
-                Current.WIND_SPEED,
-                Current.WIND_DIRECTION
+            latitude = pref.userLocation.latitude,
+            longitude = pref.userLocation.longitude,
+            currentParams = listOf(
+                CurrentParams.TEMPERATURE,
+                CurrentParams.CODE,
+                CurrentParams.APPARENT,
+                CurrentParams.HUMIDITY,
+                CurrentParams.WIND_SPEED,
+                CurrentParams.WIND_DIRECTION
             ),
-            hourlyArgs = null,
-            dailyArgs = null,
-            temperatureUnit = pref.tempUnit,
-            windSpeedUnit = pref.windSpeedUnit,
+            hourlyParams = null,
+            dailyParams = null,
+            temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
+            windSpeedUnitParam = WindSpeedUnitParams.getFromPref(pref),
             days = 1
         )
         val result = forecastSource.getForecast(request)
@@ -76,20 +91,20 @@ class WeatherRepositoryImpl @Inject constructor(
 
     private fun fullFlow(pref: UserPref) = flow {
         val request = ForecastRequest(
-            latitude = pref.location.latitude,
-            longitude = pref.location.longitude,
-            currentArgs = listOf(
-                Current.TEMPERATURE,
-                Current.CODE,
-                Current.APPARENT,
-                Current.HUMIDITY,
-                Current.WIND_SPEED,
-                Current.WIND_DIRECTION
+            latitude = pref.userLocation.latitude,
+            longitude = pref.userLocation.longitude,
+            currentParams = listOf(
+                CurrentParams.TEMPERATURE,
+                CurrentParams.CODE,
+                CurrentParams.APPARENT,
+                CurrentParams.HUMIDITY,
+                CurrentParams.WIND_SPEED,
+                CurrentParams.WIND_DIRECTION
             ),
-            hourlyArgs = listOf(Hourly.TEMPERATURE, Hourly.CODE),
-            dailyArgs = listOf(Daily.MAX_TEMPERATURE, Daily.MIN_TEMPERATURE, Daily.CODE),
-            temperatureUnit = pref.tempUnit,
-            windSpeedUnit = pref.windSpeedUnit,
+            hourlyParams = listOf(HourlyParams.TEMPERATURE, HourlyParams.CODE),
+            dailyParams = listOf(DailyParams.MAX_TEMPERATURE, DailyParams.MIN_TEMPERATURE, DailyParams.CODE),
+            temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
+            windSpeedUnitParam = WindSpeedUnitParams.getFromPref(pref),
             days = 15
         )
         val result = forecastSource.getForecast(request)
@@ -109,11 +124,10 @@ class WeatherRepositoryImpl @Inject constructor(
         val current = db.forecastDao().getCurrentForecast()
         val hourly = db.forecastDao().getHourlyForecast(System.currentTimeMillis() / 1000)
         val daily = db.forecastDao().getDailyForecast()
-        val location = geocoderSource.getLocationName(current.latitude, current.longitude)
 
         emit(
             mapOf(
-                CURRENT to current.toCurrent(pref.location.city),
+                CURRENT to current.toCurrent(pref.userLocation.city),
                 HOURLY to WeatherModel.HourlySample(hourly.map { it.toHourly() }),
                 DAILY to WeatherModel.DailySample(daily.map { it.toDaily() })
             )

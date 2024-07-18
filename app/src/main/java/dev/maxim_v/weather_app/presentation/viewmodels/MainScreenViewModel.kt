@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.CURRENT
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.DAILY
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.HOURLY
+import dev.maxim_v.weather_app.domain.usecases.GetLocationWithGpsUseCase
 import dev.maxim_v.weather_app.domain.usecases.GetWeatherUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getWeatherUseCase: GetWeatherUseCase
+    private val getWeatherUseCase: GetWeatherUseCase,
+    private val getLocationWithGpsUseCase: GetLocationWithGpsUseCase
 ) : ViewModel() {
 
     private val _mainScreenState: MutableStateFlow<MainScreenState> = MutableStateFlow(MainScreenState.Initial)
@@ -30,5 +32,14 @@ class MainScreenViewModel @Inject constructor(
                 _mainScreenState.value = MainScreenState.Success(it)
             }
         }
+    }
+
+    suspend fun getLocationWithGps() {
+        getLocationWithGpsUseCase.invoke()
+        getWeatherUseCase(CURRENT, HOURLY, DAILY)
+            .onStart { _mainScreenState.value = MainScreenState.Loading }
+            .collectLatest {
+                _mainScreenState.value = MainScreenState.Success(it)
+            }
     }
 }

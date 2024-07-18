@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface WeatherRepository {
 
     suspend fun getWeather(vararg weatherSample: WeatherSample): Flow<Map<WeatherSample, WeatherModel>>
+
+    suspend fun getLocationWithGps()
 }
