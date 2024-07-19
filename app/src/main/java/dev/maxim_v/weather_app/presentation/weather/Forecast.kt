@@ -31,41 +31,39 @@ fun Forecast(modifier: Modifier = Modifier, currentSample: CurrentSample, hourly
                 .fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                    alpha = 0.3f
-                ),
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface
             ),
+
+
             currentWeather = currentSample
         )
         HourlyChart(
             modifier = Modifier
                 .padding(16.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer.copy(
-                        alpha = 0.5f
-                    ), shape = RoundedCornerShape(16.dp)
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(16.dp)
                 )
                 .horizontalScroll(rememberScrollState())
                 .height(240.dp)
                 .width(1800.dp),
             data = hourlySample.data,
-            mainGraphLineColor = MaterialTheme.colorScheme.tertiary,
+            mainGraphLineColor = MaterialTheme.colorScheme.primary,
             secondaryGraphLineColor = MaterialTheme.colorScheme.secondary,
             secondaryGraphLineAlpha = 0.5f,
-            graphGradientColor = MaterialTheme.colorScheme.primary,
+            graphGradientColor = MaterialTheme.colorScheme.inversePrimary,
             graphGradientAlpha = 0.5f,
-            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onBackground),
-            timeTextStyle = ReplacementTheme.typography.extraSmall.copy(color = MaterialTheme.colorScheme.onSurface)
+            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onSurface),
+            timeTextStyle = ReplacementTheme.typography.extraSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
         DailyChart(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer.copy(
-                        alpha = 0.5f
-                    ), shape = RoundedCornerShape(16.dp)
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(16.dp)
                 )
                 .horizontalScroll(rememberScrollState())
                 .height(240.dp)
@@ -73,8 +71,8 @@ fun Forecast(modifier: Modifier = Modifier, currentSample: CurrentSample, hourly
             data = dailySample.data,
             mainGraphLineColor = MaterialTheme.colorScheme.primary,
             mainGraphLineWidth = 16.dp,
-            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onBackground),
-            dateTextStyle = ReplacementTheme.typography.extraSmall.copy(color = MaterialTheme.colorScheme.onSurface)
+            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onSurface),
+            dateTextStyle = ReplacementTheme.typography.extraSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
     }
 }

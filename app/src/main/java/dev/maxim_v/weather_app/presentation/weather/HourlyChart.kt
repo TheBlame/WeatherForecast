@@ -4,8 +4,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -207,17 +209,21 @@ private fun PreviewChart() {
     WeatherForecastTheme(darkTheme = true) {
         HourlyChart(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                    , shape = RoundedCornerShape(16.dp)
+                )
                 .horizontalScroll(rememberScrollState())
-                .height(300.dp)
-                .width(800.dp),
+                .height(240.dp)
+                .width(1800.dp),
             data = data,
             mainGraphLineColor = MaterialTheme.colorScheme.primary,
             secondaryGraphLineColor = MaterialTheme.colorScheme.secondary,
             secondaryGraphLineAlpha = 0.5f,
             graphGradientColor = MaterialTheme.colorScheme.inversePrimary,
             graphGradientAlpha = 0.5f,
-            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onBackground),
+            valueTextStyle = ReplacementTheme.typography.small.copy(color = MaterialTheme.colorScheme.onSurface),
             timeTextStyle = ReplacementTheme.typography.extraSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
     }

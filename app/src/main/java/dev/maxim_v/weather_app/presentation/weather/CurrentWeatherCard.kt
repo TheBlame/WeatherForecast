@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -93,7 +94,8 @@ fun CurrentWeatherCard(
             ) {
                 IconWithText(
                     icon = R.drawable.water_percent,
-                    text = stringResource(id = R.string.humidity, currentWeather.humidity)
+                    text = stringResource(id = R.string.humidity, currentWeather.humidity),
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 IconWithText(
                     icon = R.drawable.weather_windy,
@@ -101,7 +103,8 @@ fun CurrentWeatherCard(
                         id = R.string.ms,
                         currentWeather.windSpeed,
                         currentWeather.windDirection
-                    )
+                    ),
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -109,7 +112,7 @@ fun CurrentWeatherCard(
 }
 
 @Composable
-fun IconWithText(icon: Int, text: String) {
+fun IconWithText(icon: Int, text: String, textColor: Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -122,6 +125,7 @@ fun IconWithText(icon: Int, text: String) {
         Text(
             text = text,
             style = ReplacementTheme.typography.small,
+            color = textColor
         )
     }
 }
@@ -129,7 +133,7 @@ fun IconWithText(icon: Int, text: String) {
 @Preview
 @Composable
 private fun CurrentWeatherCardPreview() {
-    WeatherForecastTheme(darkTheme = true) {
+    WeatherForecastTheme(darkTheme = false) {
         CurrentWeatherCard(
             modifier = Modifier.fillMaxWidth(),
             currentWeather = WeatherModel.CurrentSample(
@@ -141,6 +145,10 @@ private fun CurrentWeatherCardPreview() {
                 windSpeed = "10",
                 windDirection = "south",
                 precipitation = "0 mm"
+            ),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         )
     }
