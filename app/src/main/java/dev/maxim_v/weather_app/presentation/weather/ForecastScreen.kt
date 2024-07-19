@@ -4,8 +4,10 @@ import android.Manifest
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -40,6 +42,7 @@ import dev.maxim_v.weather_app.domain.entity.WeatherSample.CURRENT
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.DAILY
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.HOURLY
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
+import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenState
 import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenViewModel
 import dev.maxim_v.weather_app.util.checkLocationPermissions
@@ -84,90 +87,97 @@ fun ForecastScreen(modifier: Modifier = Modifier, viewModel: MainScreenViewModel
         }
     }
 
-    ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-        ModalDrawerSheet { /* Drawer content */ }
-    }) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.background,
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = "Тюмень",
-                            style = ReplacementTheme.typography.large
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                drawerState.apply {
-                                    if (isClosed) open() else close()
-                                }
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = null
+    WeatherForecastTheme {
+        ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+            ModalDrawerSheet {
+                SettingsSheet(
+                    modifier = Modifier
+                        .width(IntrinsicSize.Max)
+                )
+            }
+        }) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = MaterialTheme.colorScheme.background,
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            Text(
+                                text = "Тюмень",
+                                style = ReplacementTheme.typography.large
                             )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            if (checkLocationPermissions(context)
-                            ) {
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        navigationIcon = {
+                            IconButton(onClick = {
                                 scope.launch {
-                                    viewModel.getLocationWithGps()
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
                                 }
-                            } else {
-                                locationPermissionRequest.launch(
-                                    arrayOf(
-                                        Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION
-                                    )
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Menu,
+                                    contentDescription = null
                                 )
                             }
+                        },
+                        actions = {
+                            IconButton(onClick = {
+                                if (checkLocationPermissions(context)
+                                ) {
+                                    scope.launch {
+                                        viewModel.getLocationWithGps()
+                                    }
+                                } else {
+                                    locationPermissionRequest.launch(
+                                        arrayOf(
+                                            Manifest.permission.ACCESS_FINE_LOCATION,
+                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                        )
+                                    )
+                                }
 
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.LocationOn,
-                                contentDescription = null
-                            )
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.LocationOn,
+                                    contentDescription = null
+                                )
+                            }
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = null
+                                )
+                            }
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            }
-        ) { innerPadding ->
-            when (val currentState = screenState.value) {
-                is MainScreenState.Success -> {
-                    Forecast(
-                        modifier = modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState()),
-                        currentSample = currentState.data[CURRENT] as WeatherModel.CurrentSample,
-                        hourlySample = currentState.data[HOURLY] as WeatherModel.HourlySample,
-                        dailySample = currentState.data[DAILY] as WeatherModel.DailySample
                     )
+                },
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
                 }
+            ) { innerPadding ->
+                when (val currentState = screenState.value) {
+                    is MainScreenState.Success -> {
+                        Forecast(
+                            modifier = modifier
+                                .padding(innerPadding)
+                                .verticalScroll(rememberScrollState()),
+                            currentSample = currentState.data[CURRENT] as WeatherModel.CurrentSample,
+                            hourlySample = currentState.data[HOURLY] as WeatherModel.HourlySample,
+                            dailySample = currentState.data[DAILY] as WeatherModel.DailySample
+                        )
+                    }
 
-                MainScreenState.Error -> {}
-                MainScreenState.Initial -> {}
-                MainScreenState.Loading -> {}
+                    MainScreenState.Error -> {}
+                    MainScreenState.Initial -> {}
+                    MainScreenState.Loading -> {}
+                }
             }
         }
     }

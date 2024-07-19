@@ -70,7 +70,7 @@ fun CurrentWeatherCard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = stringResource(id = R.string.celsius, currentWeather.temp),
+                        text = stringResource(id = R.string.temp_format, currentWeather.temp),
                         style = ReplacementTheme.typography.extraLarge,
                     )
                     Text(
@@ -100,7 +100,7 @@ fun CurrentWeatherCard(
                 IconWithText(
                     icon = R.drawable.weather_windy,
                     text = stringResource(
-                        id = R.string.ms,
+                        id = R.string.ms_format,
                         currentWeather.windSpeed,
                         currentWeather.windDirection
                     ),

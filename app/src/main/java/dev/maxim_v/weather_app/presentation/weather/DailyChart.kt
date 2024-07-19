@@ -9,6 +9,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -135,7 +136,8 @@ private fun PreviewChart() {
     WeatherForecastTheme(darkTheme = true) {
         DailyChart(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f), shape = RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(12.dp))
+                .background(color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f))
                 .width(800.dp)
                 .height(200.dp),
             data = data,

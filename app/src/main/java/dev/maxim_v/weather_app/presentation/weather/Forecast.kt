@@ -13,6 +13,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.maxim_v.weather_app.domain.entity.WeatherModel.CurrentSample
 import dev.maxim_v.weather_app.domain.entity.WeatherModel.DailySample
@@ -29,9 +30,9 @@ fun Forecast(modifier: Modifier = Modifier, currentSample: CurrentSample, hourly
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp)
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 contentColor = MaterialTheme.colorScheme.onSurface
             ),
 
@@ -41,9 +42,9 @@ fun Forecast(modifier: Modifier = Modifier, currentSample: CurrentSample, hourly
         HourlyChart(
             modifier = Modifier
                 .padding(16.dp)
+                .clip(RoundedCornerShape(12.dp))
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(16.dp)
+                    color = MaterialTheme.colorScheme.surfaceContainer
                 )
                 .horizontalScroll(rememberScrollState())
                 .height(240.dp)
@@ -61,9 +62,9 @@ fun Forecast(modifier: Modifier = Modifier, currentSample: CurrentSample, hourly
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
+                .clip(RoundedCornerShape(12.dp))
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(16.dp)
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh
                 )
                 .horizontalScroll(rememberScrollState())
                 .height(240.dp)

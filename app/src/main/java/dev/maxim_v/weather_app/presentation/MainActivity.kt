@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
-import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.presentation.weather.ForecastScreen
 
 @AndroidEntryPoint
@@ -14,10 +13,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            WeatherForecastTheme {
-                //TODO Permission dialog on start
-                ForecastScreen()
-            }
+            //TODO Permission dialog on start
+            ForecastScreen()
         }
     }
 }

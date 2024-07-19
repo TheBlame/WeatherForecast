@@ -57,7 +57,7 @@ fun DailyTempCard(
             Row {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = stringResource(id = R.string.celsius, dailyForecast.maxTemp),
+                        text = stringResource(id = R.string.temp_format, dailyForecast.maxTemp),
                         style = ReplacementTheme.typography.small
                     )
                     Text(
@@ -69,7 +69,7 @@ fun DailyTempCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = stringResource(id = R.string.celsius, dailyForecast.minTemp),
+                        text = stringResource(id = R.string.temp_format, dailyForecast.minTemp),
                         style = ReplacementTheme.typography.small,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
