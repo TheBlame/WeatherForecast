@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
-import dev.maxim_v.weather_app.presentation.weather.ForecastScreen
+import dev.maxim_v.weather_app.presentation.weather.MainScreenRoot
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             //TODO Permission dialog on start
-            ForecastScreen()
+            MainScreenRoot()
         }
     }
 }

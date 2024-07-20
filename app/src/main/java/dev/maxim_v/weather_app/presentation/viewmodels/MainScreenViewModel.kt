@@ -1,5 +1,8 @@
 package dev.maxim_v.weather_app.presentation.viewmodels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,8 +11,7 @@ import dev.maxim_v.weather_app.domain.entity.WeatherSample.DAILY
 import dev.maxim_v.weather_app.domain.entity.WeatherSample.HOURLY
 import dev.maxim_v.weather_app.domain.usecases.GetLocationWithGpsUseCase
 import dev.maxim_v.weather_app.domain.usecases.GetWeatherUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -21,25 +23,37 @@ class MainScreenViewModel @Inject constructor(
     private val getLocationWithGpsUseCase: GetLocationWithGpsUseCase
 ) : ViewModel() {
 
-    private val _mainScreenState: MutableStateFlow<MainScreenState> = MutableStateFlow(MainScreenState.Initial)
-    val mainScreenState = _mainScreenState.asStateFlow()
+    var mainScreenState by mutableStateOf<MainScreenState>(MainScreenState.Initial)
+        private set
+
+    private var job: Job? = null
 
     init {
         viewModelScope.launch {
-            getWeatherUseCase(CURRENT, HOURLY, DAILY)
-                .onStart { _mainScreenState.value = MainScreenState.Loading }
-                .collectLatest {
-                _mainScreenState.value = MainScreenState.Success(it)
-            }
+            getWeather()
         }
     }
 
-    suspend fun getLocationWithGps() {
-        getLocationWithGpsUseCase.invoke()
+    private fun getLocationWithGps() {
+        job?.cancel()
+        job = viewModelScope.launch {
+            getLocationWithGpsUseCase.invoke()
+            getWeather()
+        }
+    }
+
+    private suspend fun getWeather() {
         getWeatherUseCase(CURRENT, HOURLY, DAILY)
-            .onStart { _mainScreenState.value = MainScreenState.Loading }
+            .onStart { mainScreenState = MainScreenState.Loading }
             .collectLatest {
-                _mainScreenState.value = MainScreenState.Success(it)
+                mainScreenState = MainScreenState.Success(it)
             }
+    }
+
+
+    fun onEvent(event: MainScreenEvent) {
+        when (event) {
+            MainScreenEvent.GetLocationWithGps -> getLocationWithGps()
+        }
     }
 }
