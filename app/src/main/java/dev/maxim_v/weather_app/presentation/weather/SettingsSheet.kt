@@ -21,11 +21,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -54,11 +54,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.maxim_v.weather_app.R
-import dev.maxim_v.weather_app.domain.entity.TemperatureUnit.CELSIUS
-import dev.maxim_v.weather_app.domain.entity.TemperatureUnit.FAHRENHEIT
-import dev.maxim_v.weather_app.domain.entity.ThemeType
-import dev.maxim_v.weather_app.domain.entity.WindSpeedUnit.KMH
-import dev.maxim_v.weather_app.domain.entity.WindSpeedUnit.MS
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.CELSIUS
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.FAHRENHEIT
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.KMH
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.MS
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.util.getString
@@ -68,15 +68,10 @@ import dev.maxim_v.weather_app.util.stringResource
 @Composable
 fun SettingsSheet(modifier: Modifier = Modifier) {
 
-    ModalDrawerSheet(
+    DismissibleDrawerSheet(
         modifier = modifier,
         drawerContainerColor = MaterialTheme.colorScheme.background,
-        drawerShape = RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 12.dp,
-            bottomStart = 0.dp,
-            bottomEnd = 12.dp
-        )
+
     ) {
         val context = LocalContext.current
 
@@ -125,7 +120,7 @@ fun SettingsSheet(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.options),
+                text = stringResource(id = R.string.settings),
                 style = ReplacementTheme.typography.medium,
                 color = MaterialTheme.colorScheme.onPrimary
             )

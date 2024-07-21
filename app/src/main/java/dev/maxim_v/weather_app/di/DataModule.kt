@@ -11,8 +11,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.maxim_v.weather_app.data.WeatherRepositoryImpl
 import dev.maxim_v.weather_app.data.database.AppDatabase
+import dev.maxim_v.weather_app.data.datastore.UserLocationSerializer
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserPrefSerializer
+import dev.maxim_v.weather_app.data.datastore.UserSavedLocation
 import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
 import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastApi
@@ -22,7 +24,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
-private const val DATA_STORE_FILE_NAME = "user_prefs.pb"
+private const val USER_PREFS_FILE_NAME = "user_prefs.pb"
+private const val USER_SAVED_LOCATION_FILE_NAME = "user_saved_location.pb"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -57,7 +60,19 @@ interface DataModule {
         fun providePref(application: Application): DataStore<UserPref> {
             return DataStoreFactory.create(
                 serializer = UserPrefSerializer,
-                produceFile = { application.applicationContext.dataStoreFile(DATA_STORE_FILE_NAME) },
+                produceFile = { application.applicationContext.dataStoreFile(USER_PREFS_FILE_NAME) },
+                corruptionHandler = null,
+                scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+            )
+        }
+
+        @Singleton
+        @Provides
+        fun provideUserSavedLocation(application: Application): DataStore<UserSavedLocation> {
+            return DataStoreFactory.create(
+                serializer = UserLocationSerializer,
+                produceFile = {application.applicationContext.dataStoreFile(
+                    USER_SAVED_LOCATION_FILE_NAME)},
                 corruptionHandler = null,
                 scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
             )

@@ -7,7 +7,9 @@ data class CurrentUnitsDto(
     @SerializedName("interval")
     val interval: String,
     @SerializedName("temperature_2m")
-    val temperature2m: String,
+    val temperature2m: Temperature2UnitDto,
+    @SerializedName("wind_speed_10m")
+    val windSpeed10m: WindSpeedUnitDto,
     @SerializedName("time")
     val time: String,
     @SerializedName("weather_code")

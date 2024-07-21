@@ -1,6 +1,6 @@
 package dev.maxim_v.weather_app.presentation.weather
 
-import dev.maxim_v.weather_app.domain.entity.WeatherType
+import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
 
 sealed class ChartCoordinate {
 

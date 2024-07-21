@@ -1,7 +1,7 @@
 package dev.maxim_v.weather_app.data.network.queryparams
 
 import dev.maxim_v.weather_app.data.datastore.UserPref
-import dev.maxim_v.weather_app.domain.entity.WindSpeedUnit
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit
 
 enum class WindSpeedUnitParams(private val param: String) {
     MS("ms"),

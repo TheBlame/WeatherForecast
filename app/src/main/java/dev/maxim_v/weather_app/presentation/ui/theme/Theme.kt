@@ -313,8 +313,8 @@ fun WeatherForecastTheme(
         extraLarge = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
-            fontSize = 64.sp,
-            lineHeight = 68.sp,
+            fontSize = 72.sp,
+            lineHeight = 76.sp,
             letterSpacing = 0.5.sp
         )
     )

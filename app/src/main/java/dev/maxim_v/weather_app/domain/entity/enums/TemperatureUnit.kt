@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.domain.entity
+package dev.maxim_v.weather_app.domain.entity.enums
 
 enum class TemperatureUnit {
     CELSIUS, FAHRENHEIT

@@ -23,7 +23,7 @@ interface ForecastDao {
     suspend fun insertDailyForecast(dailyForecast: List<DailyForecastDbModel>)
 
     @Query("SELECT * FROM current_forecast LIMIT 1")
-    suspend fun getCurrentForecast(): CurrentForecastDbModel
+    suspend fun getCurrentForecast(): CurrentForecastDbModel?
 
     @Query("SELECT * FROM hourly_forecast WHERE timestamp > :time LIMIT 24")
     suspend fun getHourlyForecast(time: Long): List<HourlyForecastDbModel>

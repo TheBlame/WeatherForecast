@@ -13,17 +13,17 @@ import androidx.compose.ui.text.drawText
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import dev.maxim_v.weather_app.R
-import dev.maxim_v.weather_app.domain.entity.TemperatureUnit
-import dev.maxim_v.weather_app.domain.entity.TemperatureUnit.CELSIUS
-import dev.maxim_v.weather_app.domain.entity.TemperatureUnit.FAHRENHEIT
-import dev.maxim_v.weather_app.domain.entity.ThemeType
-import dev.maxim_v.weather_app.domain.entity.ThemeType.AUTO
-import dev.maxim_v.weather_app.domain.entity.ThemeType.DARK
-import dev.maxim_v.weather_app.domain.entity.ThemeType.LIGHT
-import dev.maxim_v.weather_app.domain.entity.WeatherType
-import dev.maxim_v.weather_app.domain.entity.WindSpeedUnit
-import dev.maxim_v.weather_app.domain.entity.WindSpeedUnit.KMH
-import dev.maxim_v.weather_app.domain.entity.WindSpeedUnit.MS
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.CELSIUS
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.FAHRENHEIT
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.AUTO
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.DARK
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.LIGHT
+import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.KMH
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.MS
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -110,7 +110,7 @@ fun TemperatureUnit.getString(context: Context): String {
 }
 
 @Composable
-fun WindSpeedUnit.stringResource(context: Context? = null): String {
+fun WindSpeedUnit.stringResource(): String {
     return when (this) {
         MS -> stringResource(id = R.string.ms)
         KMH -> stringResource(id = R.string.kmh)
@@ -121,5 +121,19 @@ fun WindSpeedUnit.getString(context: Context): String {
     return when (this) {
         MS -> context.getString(R.string.ms)
         KMH -> context.getString(R.string.kmh)
+    }
+}
+
+@Composable
+fun Direction.stringResource(): String {
+    return when (this) {
+        Direction.NORTH -> stringResource(id = R.string.north_direction)
+        Direction.NORTH_EAST -> stringResource(id = R.string.north_east_direction)
+        Direction.EAST -> stringResource(id = R.string.east_direction)
+        Direction.SOUTH_EAST -> stringResource(id = R.string.south_east_direction)
+        Direction.SOUTH -> stringResource(id = R.string.south_direction)
+        Direction.SOUTH_WEST -> stringResource(id = R.string.south_west_direction)
+        Direction.WEST -> stringResource(id = R.string.west_direction)
+        Direction.NORTH_WEST -> stringResource(id = R.string.north_west_direction)
     }
 }

@@ -1,7 +1,7 @@
 package dev.maxim_v.weather_app.data.network.queryparams
 
 import dev.maxim_v.weather_app.data.datastore.UserPref
-import dev.maxim_v.weather_app.domain.entity.TemperatureUnit
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit
 
 enum class TemperatureUnitParams(private val param: String) {
     CELSIUS("celsius"),

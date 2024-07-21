@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.DailyForecast
-import dev.maxim_v.weather_app.domain.entity.WeatherType
+import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.util.measureAndDrawText

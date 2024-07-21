@@ -11,16 +11,18 @@ import javax.inject.Inject
 class ForecastSource @Inject constructor(private val forecastApi: ForecastApi) {
 
     suspend fun getForecast(request: ForecastRequest) =
-        wrapRetrofitExceptions { forecastApi.loadForecast(
-            latitude = request.latitude,
-            longitude = request.longitude,
-            currentParams = request.currentParams,
-            hourlyParams = request.hourlyParams,
-            dailyParams = request.dailyParams,
-            tempUnit = request.temperatureUnitParam,
-            windSpeedUnitParam = request.windSpeedUnitParam,
-            forecastDays = request.days
-        ) }
+        wrapRetrofitExceptions {
+            forecastApi.loadForecast(
+                latitude = request.latitude,
+                longitude = request.longitude,
+                currentParams = request.currentParams,
+                hourlyParams = request.hourlyParams,
+                dailyParams = request.dailyParams,
+                tempUnit = request.temperatureUnitParam,
+                windSpeedUnitParam = request.windSpeedUnitParam,
+                forecastDays = request.days
+            )
+        }
 
     private suspend fun <T> wrapRetrofitExceptions(block: suspend () -> T): RequestResult<T> {
         return try {

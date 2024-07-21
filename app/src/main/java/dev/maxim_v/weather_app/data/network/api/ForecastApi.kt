@@ -25,7 +25,7 @@ interface ForecastApi {
         @Query("daily") dailyParams: @JvmSuppressWildcards List<DailyParams>?,
         @Query("temperature_unit") tempUnit: TemperatureUnitParams,
         @Query("wind_speed_unit") windSpeedUnitParam: WindSpeedUnitParams,
-        @Query("timeformat") timeFormat:String = "unixtime",
+        @Query("timeformat") timeFormat: String = "unixtime",
         @Query("timezone") timeZone: String = "auto",
         @Query("forecast_days") forecastDays: Int
     ): ForecastDto

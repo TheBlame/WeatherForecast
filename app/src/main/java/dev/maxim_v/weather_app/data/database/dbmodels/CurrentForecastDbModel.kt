@@ -2,7 +2,9 @@ package dev.maxim_v.weather_app.data.database.dbmodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import dev.maxim_v.weather_app.data.WeatherCode
+import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit
+import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
+import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit
 
 @Entity(tableName = "current_forecast")
 data class CurrentForecastDbModel(
@@ -12,7 +14,9 @@ data class CurrentForecastDbModel(
     val humidity: Int,
     val windSpeed: Double,
     val windDirection: Int,
-    val weatherCode: WeatherCode,
+    val temperatureUnit: TemperatureUnit,
+    val windSpeedUnit: WindSpeedUnit,
+    val weatherType: WeatherType,
     val timestamp: Long,
     val latitude: Double,
     val longitude: Double,
