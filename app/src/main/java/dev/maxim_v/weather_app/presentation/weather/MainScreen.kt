@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,8 +37,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -85,6 +91,10 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    var lastContent: MainScreenState by remember {
+        mutableStateOf(MainScreenState.Initial)
+    }
+    if (screenState is MainScreenState.Content) lastContent = screenState
 
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -139,7 +149,7 @@ fun MainScreen(
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = if (screenState is MainScreenState.Content) screenState.data.location else "",
+                            text = (lastContent as? MainScreenState.Content)?.data?.location ?: "",
                             style = ReplacementTheme.typography.large
                         )
                     },
@@ -198,25 +208,36 @@ fun MainScreen(
                 SnackbarHost(hostState = snackbarHostState)
             }
         ) { innerPadding ->
+
             when (screenState) {
-                is MainScreenState.Content -> {
-                    MainScreenContent(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState()),
-                        currentForecast = screenState.data.currentForecast,
-                        hourlyForecast = screenState.data.hourlyForecast,
-                        dailyForecast = screenState.data.dailyForecast
-                    )
+                is MainScreenState.Content, MainScreenState.Loading -> {
+                    if (lastContent is MainScreenState.Content) {
+                        MainScreenContent(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .verticalScroll(rememberScrollState()),
+                            currentForecast = (lastContent as MainScreenState.Content).data.currentForecast,
+                            hourlyForecast = (lastContent as MainScreenState.Content).data.hourlyForecast,
+                            dailyForecast = (lastContent as MainScreenState.Content).data.dailyForecast
+                        )
+                    }
+                    if (screenState is MainScreenState.Loading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
                 }
 
                 MainScreenState.NoContent -> {}
                 MainScreenState.Initial -> {}
-                MainScreenState.Loading -> {}
             }
         }
     }
 }
+
 
 @Composable
 private fun MainScreenContent(
