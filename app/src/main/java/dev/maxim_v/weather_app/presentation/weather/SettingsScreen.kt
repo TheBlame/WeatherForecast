@@ -1,16 +1,24 @@
 package dev.maxim_v.weather_app.presentation.weather
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -30,32 +39,73 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.maxim_v.weather_app.R
+import dev.maxim_v.weather_app.domain.entity.UserSettings
 import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.CELSIUS
-import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.FAHRENHEIT
 import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
-import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.KMH
 import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.MS
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
+import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenEvent
+import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenState
+import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenViewModel
 import dev.maxim_v.weather_app.util.getString
 import dev.maxim_v.weather_app.util.stringResource
 
+@Composable
+fun SettingsScreenRoot(
+    onBackIconClick: (Boolean) -> Unit,
+    onBackPress: (Boolean) -> Unit
+) {
+    val settingsScreenViewModel: SettingsScreenViewModel = hiltViewModel()
+    val settingsScreenState by settingsScreenViewModel.settingsScreenState.collectAsStateWithLifecycle()
+
+    SettingsScreen(
+        settingsScreenState = settingsScreenState,
+        onBackIconClick = onBackIconClick,
+        onBackPress = onBackPress,
+        onEvent = settingsScreenViewModel::onEvent
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
+private fun SettingsScreen(
+    modifier: Modifier = Modifier,
+    settingsScreenState: SettingsScreenState,
+    onEvent: (SettingsScreenEvent) -> Unit,
+    onBackIconClick: (Boolean) -> Unit,
+    onBackPress: (Boolean) -> Unit
+) {
+    var needMainScreenRefresh by remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        onBackPress(needMainScreenRefresh)
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
@@ -75,7 +125,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                 ),
                 navigationIcon = {
                     IconButton(onClick = {
-
+                        onBackIconClick(needMainScreenRefresh)
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -87,62 +137,59 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             )
         },
     ) { innerPadding ->
-        SettingsScreenContent(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        )
+        when (settingsScreenState) {
+            is SettingsScreenState.Ready -> {
+                SettingsScreenContent(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(vertical = 32.dp, horizontal = 16.dp),
+                    settings = settingsScreenState.setting,
+                    onEvent = onEvent,
+                    needMainScreenRefresh = { needMainScreenRefresh = it }
+                )
+            }
+
+            SettingsScreenState.Initial -> {}
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreenContent(modifier: Modifier = Modifier) {
+fun SettingsScreenContent(
+    modifier: Modifier = Modifier,
+    settings: UserSettings,
+    onEvent: (SettingsScreenEvent) -> Unit,
+    needMainScreenRefresh: (Boolean) -> Unit
+) {
     val context = LocalContext.current
 
     val tempOptions = remember {
-        listOf(CELSIUS, FAHRENHEIT)
+        settings.tempUnit::class.java.enumConstants.toList()
     }
 
     val tempItems = remember {
         tempOptions.map { it.getString(context) }
     }
 
-    var tempSelectedIndex by remember {
-        mutableIntStateOf(0)
-    }
-
     val speedOptions = remember {
-        listOf(MS, KMH)
+        settings.windSpeedUnit::class.java.enumConstants.toList()
     }
 
     val speedItems = remember {
         speedOptions.map { it.getString(context) }
     }
 
-    var speedSelectedIndex by remember {
-        mutableIntStateOf(0)
-    }
-
-    val themeOptions = listOf(
-        ThemeType.AUTO, ThemeType.LIGHT, ThemeType.DARK
-    )
-
-    val (selectedTheme, onThemeSelected) = remember {
-        mutableStateOf(themeOptions[0])
-    }
-
-    var notificationWidget by remember {
-        mutableStateOf(false)
+    val themeOptions = remember {
+        settings.theme::class.java.enumConstants.toList()
     }
 
     Row(modifier = modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 32.dp)
         ) {
-
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(id = R.string.units),
@@ -162,18 +209,22 @@ fun SettingsScreenContent(modifier: Modifier = Modifier) {
             ) {
                 TextWithTextSwitch(
                     text = stringResource(id = R.string.temperature),
-                    items = tempItems,
-                    selectedIndex = tempSelectedIndex,
+                    items = tempOptions,
+                    itemNames = tempItems,
+                    selectedItem = settings.tempUnit,
                     onSelectionChange = {
-                        tempSelectedIndex = it
+                        onEvent(SettingsScreenEvent.SettingUpdate(settings.copy(tempUnit = it)))
+                        needMainScreenRefresh(true)
                     })
                 Spacer(modifier = Modifier.height(16.dp))
                 TextWithTextSwitch(
                     text = stringResource(id = R.string.wind_speed),
-                    items = speedItems,
-                    selectedIndex = speedSelectedIndex,
+                    items = speedOptions,
+                    itemNames = speedItems,
+                    selectedItem = settings.windSpeedUnit,
                     onSelectionChange = {
-                        speedSelectedIndex = it
+                        onEvent(SettingsScreenEvent.SettingUpdate(settings.copy(windSpeedUnit = it)))
+                        needMainScreenRefresh(true)
                     })
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -198,18 +249,15 @@ fun SettingsScreenContent(modifier: Modifier = Modifier) {
                 themeOptions.forEachIndexed { index, theme ->
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = (theme == selectedTheme),
-                                onClick = { onThemeSelected(theme) },
-                                role = Role.RadioButton
-                            ),
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
                             RadioButton(
-                                selected = (theme == selectedTheme),
-                                onClick = { onThemeSelected(theme) })
+                                selected = (theme == settings.theme),
+                                onClick = {
+                                    onEvent(SettingsScreenEvent.SettingUpdate(settings.copy(theme = theme)))
+                                })
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
@@ -250,12 +298,147 @@ fun SettingsScreenContent(modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Switch(
-                    checked = notificationWidget,
-                    onCheckedChange = { notificationWidget = it }
+                    checked = settings.notification,
+                    onCheckedChange = {
+                        onEvent(SettingsScreenEvent.SettingUpdate(settings.copy(notification = it)))
+                    }
                 )
             }
         }
+    }
+}
 
+@Composable
+fun <T> TextWithTextSwitch(
+    modifier: Modifier = Modifier,
+    text: String,
+    items: List<T>,
+    itemNames: List<String>,
+    selectedItem: T,
+    onSelectionChange: (T) -> Unit
+) {
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = text,
+                style = ReplacementTheme.typography.small,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            TextSwitch(
+                modifier = Modifier
+                    .height(32.dp)
+                    .width(104.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(4.dp),
+                selectedItem = selectedItem,
+                items = items,
+                itemNames = itemNames,
+                onSelectionChange = onSelectionChange,
+                textStyle = ReplacementTheme.typography.extraSmall,
+                activeSwitchCornerRadius = 16.dp,
+                activeTextColor = MaterialTheme.colorScheme.inverseSurface,
+                activeSwitchColor = MaterialTheme.colorScheme.onPrimary,
+                inactiveTextColor = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+}
+
+@Composable
+private fun <T> TextSwitch(
+    modifier: Modifier = Modifier,
+    selectedItem: T,
+    items: List<T>,
+    itemNames: List<String>,
+    onSelectionChange: (T) -> Unit,
+    textStyle: TextStyle = LocalTextStyle.current,
+    activeTextColor: Color = Color.Black,
+    inactiveTextColor: Color = Color.Unspecified,
+    activeSwitchColor: Color = Color.White,
+    activeSwitchCornerRadius: Dp = 0.dp
+) {
+    BoxWithConstraints(
+        modifier = modifier
+    ) {
+        if (itemNames.isNotEmpty()) {
+
+            val maxWidth = this.maxWidth
+            val tabWidth = maxWidth / itemNames.size
+
+            val animationOffset by animateDpAsState(
+                targetValue = tabWidth * items.indexOf(selectedItem),
+                animationSpec = tween(durationMillis = 100, easing = FastOutSlowInEasing),
+                label = "animationOffset"
+            )
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .drawWithContent {
+
+                    drawRoundRect(
+                        topLeft = Offset(x = animationOffset.toPx(), 0f),
+                        size = Size(size.width / 2, size.height),
+                        color = activeTextColor,
+                        cornerRadius = CornerRadius(
+                            x = activeSwitchCornerRadius.toPx(),
+                            y = activeSwitchCornerRadius.toPx()
+                        ),
+                    )
+
+                    with(drawContext.canvas.nativeCanvas) {
+                        val checkPoint = saveLayer(null, null)
+                        drawContent()
+                        drawRoundRect(
+                            topLeft = Offset(x = animationOffset.toPx(), 0f),
+                            size = Size(size.width / 2, size.height),
+                            color = activeSwitchColor,
+                            cornerRadius = CornerRadius(
+                                x = activeSwitchCornerRadius.toPx(),
+                                y = activeSwitchCornerRadius.toPx()
+                            ),
+                            blendMode = BlendMode.SrcOut
+                        )
+                        restoreToCount(checkPoint)
+                    }
+                }
+            ) {
+                items.forEachIndexed { index, t ->
+
+                    Box(
+                        modifier = Modifier
+                            .width(tabWidth)
+                            .fillMaxHeight()
+                            .clickable(
+                                interactionSource = remember {
+                                    MutableInteractionSource()
+                                },
+                                indication = null,
+                                onClick = {
+                                    if (t == selectedItem) {
+                                        onSelectionChange(
+                                            items.getOrNull(index + 1) ?: items[index - 1]
+                                        )
+                                    } else {
+                                        onSelectionChange(t)
+                                    }
+                                }
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = itemNames[index],
+                            color = inactiveTextColor,
+                            style = textStyle
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -263,6 +446,18 @@ fun SettingsScreenContent(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewSettingsScreen() {
     WeatherForecastTheme {
-        SettingsScreen()
+        SettingsScreen(
+            settingsScreenState = SettingsScreenState.Ready(
+                UserSettings(
+                    CELSIUS,
+                    MS,
+                    ThemeType.SYSTEM,
+                    true
+                )
+            ),
+            onEvent = {},
+            onBackIconClick = {},
+            onBackPress = {}
+        )
     }
 }

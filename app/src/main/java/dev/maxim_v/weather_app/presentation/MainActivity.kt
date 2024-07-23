@@ -3,8 +3,16 @@ package dev.maxim_v.weather_app.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.maxim_v.weather_app.presentation.weather.MainScreenRoot
+import dev.maxim_v.weather_app.presentation.navigation.AppNavGraph
+import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
+import dev.maxim_v.weather_app.presentation.viewmodels.AppThemeState
+import dev.maxim_v.weather_app.presentation.viewmodels.AppThemeViewModel
+import dev.maxim_v.weather_app.util.isDark
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -13,8 +21,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            //TODO Permission dialog on start
-            MainScreenRoot()
+            val themeViewModel: AppThemeViewModel = hiltViewModel()
+            val themeState by themeViewModel.appTheme.collectAsStateWithLifecycle()
+
+            when (val s = themeState) {
+                is AppThemeState.Ready -> {
+                    WeatherForecastTheme(s.theme.isDark()) {
+                        val navHostController = rememberNavController()
+                        AppNavGraph(navHostController = navHostController)
+                    }
+                }
+
+                AppThemeState.Initial -> {}
+            }
         }
     }
 }

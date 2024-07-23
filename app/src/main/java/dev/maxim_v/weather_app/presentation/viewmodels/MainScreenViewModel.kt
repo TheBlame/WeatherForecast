@@ -73,6 +73,7 @@ class MainScreenViewModel @Inject constructor(
     fun onEvent(event: MainScreenEvent) {
         when (event) {
             MainScreenEvent.GetLocationWithGps -> getLocationWithGps()
+            MainScreenEvent.Refresh -> viewModelScope.launch { getWeather() }
         }
     }
 }

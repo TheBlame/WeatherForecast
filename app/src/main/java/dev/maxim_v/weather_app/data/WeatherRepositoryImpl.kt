@@ -7,6 +7,7 @@ import dev.maxim_v.weather_app.data.database.dbmodels.toDaily
 import dev.maxim_v.weather_app.data.database.dbmodels.toHourly
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserSavedLocation
+import dev.maxim_v.weather_app.data.datastore.toUserSettings
 import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
 import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastRequest
@@ -21,6 +22,8 @@ import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnitParams
 import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnitParams
 import dev.maxim_v.weather_app.data.network.source.ForecastSource
 import dev.maxim_v.weather_app.domain.entity.FullForecast
+import dev.maxim_v.weather_app.domain.entity.UserSettings
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
 import dev.maxim_v.weather_app.domain.exceptions.DatabaseException
 import dev.maxim_v.weather_app.domain.exceptions.NetworkException
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
@@ -28,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -42,11 +46,10 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override suspend fun getFullForecast(): Flow<FullForecast> = flow {
         val pref = getPref()
-        val savedLocation = getSavedLocation()
-
+        val location = getSavedLocation()
         val request = ForecastRequest(
-            latitude = savedLocation.latitude,
-            longitude = savedLocation.longitude,
+            latitude = location.latitude,
+            longitude = location.longitude,
             currentParams = listOf(
                 CurrentParams.TEMPERATURE,
                 CurrentParams.CODE,
@@ -86,7 +89,7 @@ class WeatherRepositoryImpl @Inject constructor(
         if (current != null) {
             emit(
                 FullForecast(
-                    location = savedLocation.city,
+                    location = location.city,
                     currentForecast = current.toCurrent(),
                     hourlyForecast = hourly.map { it.toHourly() },
                     dailyForecast = daily.map { it.toDaily() }
@@ -111,37 +114,20 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-//    private fun onlyCurrentFlow(pref: UserSavedLocation) = flow {
-//        val request = ForecastRequest(
-//            latitude = pref.latitude,
-//            longitude = pref.longitude,
-//            currentParams = listOf(
-//                CurrentParams.TEMPERATURE,
-//                CurrentParams.CODE,
-//                CurrentParams.APPARENT,
-//                CurrentParams.HUMIDITY,
-//                CurrentParams.WIND_SPEED,
-//                CurrentParams.WIND_DIRECTION
-//            ),
-//            hourlyParams = null,
-//            dailyParams = null,
-//            temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
-//            windSpeedUnitParam = WindSpeedUnitParams.getFromPref(pref),
-//            days = 1
-//        )
-//        val result = forecastSource.getForecast(request)
-//
-//        if (result is RequestResult.Success) {
-//            result.content.toCurrentForecastDbModel()
-//                ?.let { db.forecastDao().insertCurrentForecast(it) }
-//        }
-//
-//        val current = db.forecastDao().getCurrentForecast()
-//        val location = geocoderSource.getLocationName(current!!.latitude, current.longitude)
-//
-//        emit(mapOf(CURRENT to current!!.toCurrent()))
-//    }
+    override fun getCurrentSettings(): Flow<UserSettings> = prefDs.data.map { it.toUserSettings() }
 
+    override suspend fun updateSettings(newSettings: UserSettings) {
+        prefDs.updateData {
+            it.copy(
+                tempUnit = newSettings.tempUnit,
+                windSpeedUnit = newSettings.windSpeedUnit,
+                theme = newSettings.theme,
+                notification = newSettings.notification
+            )
+        }
+    }
+
+    override fun getAppTheme(): Flow<ThemeType> = prefDs.data.map { it.theme }
 
     private suspend fun getPref(): UserPref {
         return prefDs.data.first()

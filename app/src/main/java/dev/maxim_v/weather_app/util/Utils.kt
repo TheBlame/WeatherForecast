@@ -2,6 +2,7 @@ package dev.maxim_v.weather_app.util
 
 import android.Manifest
 import android.content.Context
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -17,9 +18,9 @@ import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit
 import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.CELSIUS
 import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.FAHRENHEIT
 import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
-import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.AUTO
 import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.DARK
 import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.LIGHT
+import dev.maxim_v.weather_app.domain.entity.enums.ThemeType.SYSTEM
 import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
 import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit
 import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.KMH
@@ -88,7 +89,7 @@ fun checkLocationPermissions(context: Context) =
 @Composable
 fun ThemeType.stringResource(): String {
     return when (this) {
-        AUTO -> stringResource(id = R.string.auto)
+        SYSTEM -> stringResource(id = R.string.system)
         LIGHT -> stringResource(id = R.string.light)
         DARK -> stringResource(id = R.string.dark)
     }
@@ -135,5 +136,14 @@ fun Direction.stringResource(): String {
         Direction.SOUTH_WEST -> stringResource(id = R.string.south_west_direction)
         Direction.WEST -> stringResource(id = R.string.west_direction)
         Direction.NORTH_WEST -> stringResource(id = R.string.north_west_direction)
+    }
+}
+
+@Composable
+fun ThemeType.isDark(): Boolean {
+    return when (this) {
+        LIGHT -> false
+        DARK -> true
+        SYSTEM -> isSystemInDarkTheme()
     }
 }
