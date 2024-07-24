@@ -43,6 +43,7 @@ class MainScreenViewModel @Inject constructor(
     private fun getLocationWithGps() {
         job?.cancel()
         job = viewModelScope.launch {
+            mainScreenState = MainScreenState.Loading
             getLocation()
             getWeather()
         }
