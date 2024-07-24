@@ -203,7 +203,7 @@ fun SettingsScreenContent(
                     .padding(horizontal = 4.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(16.dp)
                     )
                     .padding(12.dp)
             ) {
@@ -240,7 +240,7 @@ fun SettingsScreenContent(
                     .padding(horizontal = 4.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(16.dp)
                     )
                     .padding(12.dp)
                     .fillMaxWidth()
@@ -286,7 +286,7 @@ fun SettingsScreenContent(
                     .padding(horizontal = 4.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(16.dp)
                     )
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,

@@ -252,7 +252,7 @@ private fun MainScreenContent(
     ) {
         CurrentWeatherCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 contentColor = MaterialTheme.colorScheme.onSurface
@@ -262,7 +262,7 @@ private fun MainScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
         HourlyChart(
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(16.dp))
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainer
                 )
@@ -281,7 +281,7 @@ private fun MainScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
         DailyChart(
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(16.dp))
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerHigh
                 )
