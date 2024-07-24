@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -69,7 +71,7 @@ import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenEvent
 import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenState
-import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenViewModel
+import dev.maxim_v.weather_app.presentation.viewmodels.SettingsScreenVM
 import dev.maxim_v.weather_app.util.getString
 import dev.maxim_v.weather_app.util.stringResource
 
@@ -78,21 +80,20 @@ fun SettingsScreenRoot(
     onBackIconClick: (Boolean) -> Unit,
     onBackPress: (Boolean) -> Unit
 ) {
-    val settingsScreenViewModel: SettingsScreenViewModel = hiltViewModel()
-    val settingsScreenState by settingsScreenViewModel.settingsScreenState.collectAsStateWithLifecycle()
+    val settingsScreenVM: SettingsScreenVM = hiltViewModel()
+    val settingsScreenState by settingsScreenVM.settingsScreenState.collectAsStateWithLifecycle()
 
     SettingsScreen(
         settingsScreenState = settingsScreenState,
         onBackIconClick = onBackIconClick,
         onBackPress = onBackPress,
-        onEvent = settingsScreenViewModel::onEvent
+        onEvent = settingsScreenVM::onEvent
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
-    modifier: Modifier = Modifier,
     settingsScreenState: SettingsScreenState,
     onEvent: (SettingsScreenEvent) -> Unit,
     onBackIconClick: (Boolean) -> Unit,
@@ -107,7 +108,7 @@ private fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
@@ -202,7 +203,7 @@ fun SettingsScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .padding(12.dp)
@@ -239,7 +240,7 @@ fun SettingsScreenContent(
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .padding(12.dp)
@@ -249,14 +250,26 @@ fun SettingsScreenContent(
                 themeOptions.forEachIndexed { index, theme ->
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .selectable(
+                                selected = (theme == settings.theme),
+                                onClick = {
+                                    onEvent(
+                                        SettingsScreenEvent
+                                            .SettingUpdate(settings.copy(theme = theme))
+                                    )
+                                }),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
                             RadioButton(
                                 selected = (theme == settings.theme),
                                 onClick = {
-                                    onEvent(SettingsScreenEvent.SettingUpdate(settings.copy(theme = theme)))
+                                    onEvent(
+                                        SettingsScreenEvent
+                                            .SettingUpdate(settings.copy(theme = theme))
+                                    )
                                 })
                         }
                         Spacer(modifier = Modifier.width(16.dp))
@@ -285,7 +298,7 @@ fun SettingsScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .padding(12.dp),

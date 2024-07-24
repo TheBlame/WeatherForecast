@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,7 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -59,7 +56,7 @@ import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenError
 import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenEvent
 import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenState
-import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenViewModel
+import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenVM
 import dev.maxim_v.weather_app.util.checkLocationPermissions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
@@ -68,14 +65,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun MainScreenRoot(onSettingIconClick: (Unit) -> Unit, needRefresh: Boolean?) {
-    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+fun MainScreenRoot(
+    onSettingIconClick: (Unit) -> Unit,
+    onSearchIconClick: (Unit) -> Unit,
+    needRefresh: Boolean?
+) {
+    val mainScreenVM: MainScreenVM = hiltViewModel()
 
     MainScreen(
-        screenState = mainScreenViewModel.mainScreenState,
-        onEvent = mainScreenViewModel::onEvent,
+        screenState = mainScreenVM.mainScreenState,
+        onEvent = mainScreenVM::onEvent,
         onSettingIconClick = onSettingIconClick,
-        errorFlow = mainScreenViewModel.errorFlow,
+        onSearchIconClick = onSearchIconClick,
+        errorFlow = mainScreenVM.errorFlow,
         needRefresh = needRefresh
     )
 }
@@ -86,6 +88,7 @@ private fun MainScreen(
     screenState: MainScreenState,
     onEvent: (MainScreenEvent) -> Unit,
     onSettingIconClick: (Unit) -> Unit,
+    onSearchIconClick: (Unit) -> Unit,
     needRefresh: Boolean?,
     errorFlow: SharedFlow<MainScreenError>
 ) {
@@ -110,7 +113,7 @@ private fun MainScreen(
             withContext(Dispatchers.Main.immediate) {
                 errorFlow.collectLatest {
                     val snackBarMessage = when (it) {
-                        MainScreenError.NetworkError -> context.getString(R.string.network_error)
+                        MainScreenError.NetworkError -> context.getString(R.string.network_error_main_screen)
                         MainScreenError.GpsAndNetworkError -> context.getString(R.string.gps_and_network_error)
                         MainScreenError.GpsError -> context.getString(R.string.gps_error)
                     }
@@ -198,7 +201,7 @@ private fun MainScreen(
                             contentDescription = null
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { onSearchIconClick(Unit) }) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = null
@@ -225,12 +228,11 @@ private fun MainScreen(
                     )
                 }
                 if (screenState is MainScreenState.Loading) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+                    ProgressIndicator(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxSize()
+                    )
                 }
             }
 

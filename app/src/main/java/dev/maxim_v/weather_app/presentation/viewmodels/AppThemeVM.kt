@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class AppThemeViewModel @Inject constructor(
+class AppThemeVM @Inject constructor(
     private val getAppThemeUseCase: GetAppThemeUseCase
 ) : ViewModel() {
 

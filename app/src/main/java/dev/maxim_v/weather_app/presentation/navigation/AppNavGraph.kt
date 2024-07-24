@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.maxim_v.weather_app.presentation.weather.LocationSearchScreenRoot
 import dev.maxim_v.weather_app.presentation.weather.MainScreenRoot
 import dev.maxim_v.weather_app.presentation.weather.SettingsScreenRoot
 
@@ -32,7 +33,8 @@ fun AppNavGraph(
             val needToRefresh = it.savedStateHandle.get<Boolean>(NEED_REFRESH)
 
             MainScreenRoot(
-                onSettingIconClick = {navHostController.navigate(Screen.SettingsScreen.route)},
+                onSettingIconClick = { navHostController.navigate(Screen.SettingsScreen.route) },
+                onSearchIconClick = { navHostController.navigate(Screen.LocationSearchScreen.route) },
                 needRefresh = needToRefresh
             )
         }
@@ -51,6 +53,48 @@ fun AppNavGraph(
                     navHostController.popBackStack()
                 })
         }
+        locationSearchScreen {
+            LocationSearchScreenRoot(
+                onBackIconClick = { navHostController.popBackStack() },
+                onLocationSelected = {
+                    navHostController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(NEED_REFRESH, it)
+                    navHostController.popBackStack()
+                }
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.locationSearchScreen(locationSearchScreen: @Composable () -> Unit) {
+    composable(
+        route = Screen.LocationSearchScreen.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                tween(SLIDE_TRANSITION_TIME)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start,
+                tween(SLIDE_TRANSITION_TIME)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                tween(SLIDE_TRANSITION_TIME)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.End,
+                tween(SLIDE_TRANSITION_TIME)
+            )
+        }) {
+        locationSearchScreen()
     }
 }
 

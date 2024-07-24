@@ -11,7 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.maxim_v.weather_app.presentation.navigation.AppNavGraph
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.presentation.viewmodels.AppThemeState
-import dev.maxim_v.weather_app.presentation.viewmodels.AppThemeViewModel
+import dev.maxim_v.weather_app.presentation.viewmodels.AppThemeVM
 import dev.maxim_v.weather_app.util.isDark
 
 @AndroidEntryPoint
@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val themeViewModel: AppThemeViewModel = hiltViewModel()
-            val themeState by themeViewModel.appTheme.collectAsStateWithLifecycle()
+            val themeVM: AppThemeVM = hiltViewModel()
+            val themeState by themeVM.appTheme.collectAsStateWithLifecycle()
 
             when (val s = themeState) {
                 is AppThemeState.Ready -> {

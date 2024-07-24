@@ -9,6 +9,7 @@ import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserSavedLocation
 import dev.maxim_v.weather_app.data.datastore.toUserSettings
 import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
+import dev.maxim_v.weather_app.data.geocoder.mapToSearchedLocation
 import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
@@ -22,6 +23,7 @@ import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnitParams
 import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnitParams
 import dev.maxim_v.weather_app.data.network.source.ForecastSource
 import dev.maxim_v.weather_app.domain.entity.FullForecast
+import dev.maxim_v.weather_app.domain.entity.SearchedLocation
 import dev.maxim_v.weather_app.domain.entity.UserSettings
 import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
 import dev.maxim_v.weather_app.domain.exceptions.DatabaseException
@@ -128,6 +130,22 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override fun getAppTheme(): Flow<ThemeType> = prefDs.data.map { it.theme }
+
+    override suspend fun getLocationWithGeocoding(city: String): Flow<List<SearchedLocation>> = flow {
+        emit(
+            geocoderSource.getLocationFromName(city)?.mapToSearchedLocation() ?: listOf()
+        )
+    }
+
+    override suspend fun saveLocation(location: SearchedLocation) {
+        locationDs.updateData {
+            it.copy(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                city = location.city
+            )
+        }
+    }
 
     private suspend fun getPref(): UserPref {
         return prefDs.data.first()

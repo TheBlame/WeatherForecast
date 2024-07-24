@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(
+class MainScreenVM @Inject constructor(
     private val getFullForecastUseCase: GetFullForecastUseCase,
     private val getLocationWithGpsUseCase: GetLocationWithGpsUseCase
 ) : ViewModel() {
