@@ -12,7 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.concurrent.TimeUnit
 
 interface ForecastApi {
 
@@ -23,11 +22,11 @@ interface ForecastApi {
         @Query("current") currentParams: @JvmSuppressWildcards List<CurrentParams>?,
         @Query("hourly") hourlyParams: @JvmSuppressWildcards List<HourlyParams>?,
         @Query("daily") dailyParams: @JvmSuppressWildcards List<DailyParams>?,
-        @Query("temperature_unit") tempUnit: TemperatureUnitParams,
-        @Query("wind_speed_unit") windSpeedUnitParam: WindSpeedUnitParams,
+        @Query("temperature_unit") tempUnit: TemperatureUnitParams?,
+        @Query("wind_speed_unit") windSpeedUnitParam: WindSpeedUnitParams?,
         @Query("timeformat") timeFormat: String = "unixtime",
         @Query("timezone") timeZone: String = "auto",
-        @Query("forecast_days") forecastDays: Int
+        @Query("forecast_days") forecastDays: Int?
     ): ForecastDto
 
     companion object {
@@ -35,9 +34,6 @@ interface ForecastApi {
         private const val BASE_URL = "https://api.open-meteo.com/v1/"
 
         private val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS) // Change it as per your requirement
-            .readTimeout(30, TimeUnit.SECONDS)// Change it as per your requirement
-            .writeTimeout(30, TimeUnit.SECONDS)// Change it as per your requirement
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })

@@ -9,8 +9,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.maxim_v.weather_app.presentation.weather.ForecastScreenRoot
 import dev.maxim_v.weather_app.presentation.weather.LocationSearchScreenRoot
-import dev.maxim_v.weather_app.presentation.weather.MainScreenRoot
 import dev.maxim_v.weather_app.presentation.weather.SettingsScreenRoot
 
 private const val FADE_TRANSITION_TIME = 700
@@ -23,16 +23,16 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = Screen.MainScreen.route,
+        startDestination = Screen.ForecastScreen.route,
         enterTransition = { fadeIn(animationSpec = tween(FADE_TRANSITION_TIME)) },
         exitTransition = { fadeOut(animationSpec = tween(FADE_TRANSITION_TIME)) },
         popEnterTransition = { fadeIn(animationSpec = tween(FADE_TRANSITION_TIME)) },
         popExitTransition = { fadeOut(animationSpec = tween(FADE_TRANSITION_TIME)) }
     ) {
-        composable(Screen.MainScreen.route) {
+        composable(Screen.ForecastScreen.route) {
             val needToRefresh = it.savedStateHandle.get<Boolean>(NEED_REFRESH)
 
-            MainScreenRoot(
+            ForecastScreenRoot(
                 onSettingIconClick = { navHostController.navigate(Screen.SettingsScreen.route) },
                 onSearchIconClick = { navHostController.navigate(Screen.LocationSearchScreen.route) },
                 needRefresh = needToRefresh
@@ -55,7 +55,18 @@ fun AppNavGraph(
         }
         locationSearchScreen {
             LocationSearchScreenRoot(
-                onBackIconClick = { navHostController.popBackStack() },
+                onBackIconClick = {
+                    navHostController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(NEED_REFRESH, false)
+                    navHostController.popBackStack()
+                },
+                onBackPress = {
+                    navHostController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(NEED_REFRESH, false)
+                    navHostController.popBackStack()
+                },
                 onLocationSelected = {
                     navHostController.previousBackStackEntry
                         ?.savedStateHandle

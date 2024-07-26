@@ -13,6 +13,7 @@ import dev.maxim_v.weather_app.data.geocoder.mapToSearchedLocation
 import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
+import dev.maxim_v.weather_app.data.network.dto.currentTemp
 import dev.maxim_v.weather_app.data.network.dto.toCurrentForecastDbModel
 import dev.maxim_v.weather_app.data.network.dto.toDailyForecastDbModelList
 import dev.maxim_v.weather_app.data.network.dto.toHourlyForecastDbModelList
@@ -22,6 +23,7 @@ import dev.maxim_v.weather_app.data.network.queryparams.HourlyParams
 import dev.maxim_v.weather_app.data.network.queryparams.TemperatureUnitParams
 import dev.maxim_v.weather_app.data.network.queryparams.WindSpeedUnitParams
 import dev.maxim_v.weather_app.data.network.source.ForecastSource
+import dev.maxim_v.weather_app.domain.entity.ForegroundWorkStatus
 import dev.maxim_v.weather_app.domain.entity.FullForecast
 import dev.maxim_v.weather_app.domain.entity.SearchedLocation
 import dev.maxim_v.weather_app.domain.entity.UserSettings
@@ -31,6 +33,7 @@ import dev.maxim_v.weather_app.domain.exceptions.NetworkException
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -145,6 +148,37 @@ class WeatherRepositoryImpl @Inject constructor(
                 city = location.city
             )
         }
+    }
+
+    override suspend fun getCurrentTemp(): String {
+        val pref = getPref()
+        val location = getSavedLocation()
+        val request = ForecastRequest(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            currentParams = listOf(
+                CurrentParams.TEMPERATURE
+            ),
+            hourlyParams = null,
+            dailyParams = null,
+            temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
+            windSpeedUnitParam = null,
+            days = null
+        )
+        val result = forecastSource.getForecast(request)
+
+        if (result is RequestResult.Success) {
+            return result.content.currentTemp()
+        } else {
+            throw NetworkException()
+        }
+    }
+
+    override fun getForegroundWorkStatus() = combine(prefDs.data, locationDs.data) { pref, location ->
+        ForegroundWorkStatus(
+            enabled = pref.notification,
+            location = location.city
+        )
     }
 
     private suspend fun getPref(): UserPref {

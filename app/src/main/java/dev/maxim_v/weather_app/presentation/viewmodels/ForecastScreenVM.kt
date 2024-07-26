@@ -1,5 +1,6 @@
 package dev.maxim_v.weather_app.presentation.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,15 +22,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenVM @Inject constructor(
+class ForecastScreenVM @Inject constructor(
     private val getFullForecastUseCase: GetFullForecastUseCase,
     private val getLocationWithGpsUseCase: GetLocationWithGpsUseCase
 ) : ViewModel() {
 
-    var mainScreenState by mutableStateOf<MainScreenState>(MainScreenState.Initial)
+    var forecastScreenState by mutableStateOf<ForecastScreenState>(ForecastScreenState.Initial)
         private set
 
-    private val _errorFlow = MutableSharedFlow<MainScreenError>()
+    private val _errorFlow = MutableSharedFlow<ForecastScreenError>()
     val errorFlow = _errorFlow.asSharedFlow()
 
     private var job: Job? = null
@@ -43,7 +44,7 @@ class MainScreenVM @Inject constructor(
     private fun getLocationWithGps() {
         job?.cancel()
         job = viewModelScope.launch {
-            mainScreenState = MainScreenState.Loading
+            forecastScreenState = ForecastScreenState.Loading
             getLocation()
             getWeather()
         }
@@ -53,28 +54,32 @@ class MainScreenVM @Inject constructor(
         try {
             getLocationWithGpsUseCase()
         } catch (e: GpsException) {
-            _errorFlow.emit(MainScreenError.GpsError)
+            _errorFlow.emit(ForecastScreenError.GpsError)
         } catch (e: NetworkException) {
-            _errorFlow.emit(MainScreenError.GpsAndNetworkError)
+            _errorFlow.emit(ForecastScreenError.GpsAndNetworkError)
         }
     }
 
     private suspend fun getWeather() {
         getFullForecastUseCase()
-            .onStart { mainScreenState = MainScreenState.Loading }
+            .onStart { forecastScreenState = ForecastScreenState.Loading }
             .catch {
-                if (it is NetworkException) _errorFlow.emit(MainScreenError.NetworkError)
-                if (it is DatabaseException) mainScreenState = MainScreenState.NoContent
+                Log.d("worker", it.toString())
+                if (it is NetworkException) _errorFlow.emit(ForecastScreenError.NetworkError)
+                if (it is DatabaseException) {
+                    Log.d("worker", it.message.toString())
+                    forecastScreenState = ForecastScreenState.NoContent
+                }
             }
             .collectLatest {
-                mainScreenState = MainScreenState.Content(it)
+                forecastScreenState = ForecastScreenState.Content(it)
             }
     }
 
-    fun onEvent(event: MainScreenEvent) {
+    fun onEvent(event: ForecastScreenEvent) {
         when (event) {
-            MainScreenEvent.GetLocationWithGps -> getLocationWithGps()
-            MainScreenEvent.Refresh -> viewModelScope.launch { getWeather() }
+            ForecastScreenEvent.GetLocationWithGps -> getLocationWithGps()
+            ForecastScreenEvent.Refresh -> viewModelScope.launch { getWeather() }
         }
     }
 }

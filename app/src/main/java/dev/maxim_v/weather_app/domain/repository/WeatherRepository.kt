@@ -1,5 +1,6 @@
 package dev.maxim_v.weather_app.domain.repository
 
+import dev.maxim_v.weather_app.domain.entity.ForegroundWorkStatus
 import dev.maxim_v.weather_app.domain.entity.FullForecast
 import dev.maxim_v.weather_app.domain.entity.SearchedLocation
 import dev.maxim_v.weather_app.domain.entity.UserSettings
@@ -21,4 +22,8 @@ interface WeatherRepository {
     suspend fun getLocationWithGeocoding(city: String): Flow<List<SearchedLocation>>
 
     suspend fun saveLocation(location: SearchedLocation)
+
+    suspend fun getCurrentTemp(): String
+
+    fun getForegroundWorkStatus(): Flow<ForegroundWorkStatus>
 }

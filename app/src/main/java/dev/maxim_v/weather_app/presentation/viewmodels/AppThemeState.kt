@@ -6,5 +6,5 @@ import dev.maxim_v.weather_app.domain.entity.enums.ThemeType
 @Immutable
 sealed class AppThemeState {
     data object Initial : AppThemeState()
-    data class Ready(val theme: ThemeType) : AppThemeState()
+    data class Data(val theme: ThemeType) : AppThemeState()
 }

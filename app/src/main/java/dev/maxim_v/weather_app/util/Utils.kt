@@ -2,6 +2,11 @@ package dev.maxim_v.weather_app.util
 
 import android.Manifest
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
@@ -13,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import androidx.core.graphics.drawable.IconCompat
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit
 import dev.maxim_v.weather_app.domain.entity.enums.TemperatureUnit.CELSIUS
@@ -28,6 +34,7 @@ import dev.maxim_v.weather_app.domain.entity.enums.WindSpeedUnit.MS
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.max
 
 fun mapTimeStampToDate(timeStamp: Long): String {
     val date = Date(timeStamp)
@@ -146,4 +153,30 @@ fun ThemeType.isDark(): Boolean {
         DARK -> true
         SYSTEM -> isSystemInDarkTheme()
     }
+}
+
+fun createIconFromString(inputNumber: String): IconCompat {
+    val paint = Paint()
+    paint.typeface = Typeface.DEFAULT_BOLD
+    paint.textScaleX = if (inputNumber.length > 3) 0.55f else 0.75f
+    paint.isAntiAlias = true
+    paint.textSize = if (inputNumber.length > 2) 72f else 64f
+    paint.textAlign = Paint.Align.CENTER
+
+    val textBounds = Rect()
+    paint.getTextBounds(inputNumber, 0, inputNumber.length, textBounds)
+    val max = max(textBounds.width(), textBounds.height())
+
+    val bitmap = Bitmap.createBitmap(
+        max, max,
+        Bitmap.Config.ARGB_8888
+    )
+
+    val canvas = Canvas(bitmap)
+    canvas.drawText(
+        inputNumber,
+        canvas.width / 2f ,
+        canvas.height / 2f + textBounds.height() / 2f,
+        paint)
+    return IconCompat.createWithBitmap(bitmap)
 }

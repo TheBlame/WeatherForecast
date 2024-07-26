@@ -69,6 +69,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,7 +93,8 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
     kapt(libs.hilt.compiler)
-
-    implementation("io.github.theapache64:rebugger:1.0.0-rc03")
+    implementation(libs.androidx.startup.runtime)
+    kapt (libs.androidx.hilt.hilt.compiler)
 }

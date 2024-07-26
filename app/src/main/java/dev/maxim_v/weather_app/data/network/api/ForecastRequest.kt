@@ -12,7 +12,7 @@ data class ForecastRequest(
     val currentParams: List<CurrentParams>?,
     val hourlyParams: List<HourlyParams>?,
     val dailyParams: List<DailyParams>?,
-    val temperatureUnitParam: TemperatureUnitParams,
-    val windSpeedUnitParam: WindSpeedUnitParams,
-    val days: Int
+    val temperatureUnitParam: TemperatureUnitParams?,
+    val windSpeedUnitParam: WindSpeedUnitParams?,
+    val days: Int?
 )

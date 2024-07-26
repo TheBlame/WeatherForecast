@@ -53,10 +53,10 @@ import dev.maxim_v.weather_app.domain.entity.CurrentForecast
 import dev.maxim_v.weather_app.domain.entity.DailyForecast
 import dev.maxim_v.weather_app.domain.entity.HourlyForecast
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
-import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenError
-import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenEvent
-import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenState
-import dev.maxim_v.weather_app.presentation.viewmodels.MainScreenVM
+import dev.maxim_v.weather_app.presentation.viewmodels.ForecastScreenError
+import dev.maxim_v.weather_app.presentation.viewmodels.ForecastScreenEvent
+import dev.maxim_v.weather_app.presentation.viewmodels.ForecastScreenState
+import dev.maxim_v.weather_app.presentation.viewmodels.ForecastScreenVM
 import dev.maxim_v.weather_app.util.checkLocationPermissions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
@@ -65,47 +65,47 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun MainScreenRoot(
+fun ForecastScreenRoot(
     onSettingIconClick: (Unit) -> Unit,
     onSearchIconClick: (Unit) -> Unit,
     needRefresh: Boolean?
 ) {
-    val mainScreenVM: MainScreenVM = hiltViewModel()
+    val forecastScreenVM: ForecastScreenVM = hiltViewModel()
 
-    MainScreen(
-        screenState = mainScreenVM.mainScreenState,
-        onEvent = mainScreenVM::onEvent,
+    ForecastScreen(
+        screenState = forecastScreenVM.forecastScreenState,
+        onEvent = forecastScreenVM::onEvent,
         onSettingIconClick = onSettingIconClick,
         onSearchIconClick = onSearchIconClick,
-        errorFlow = mainScreenVM.errorFlow,
+        errorFlow = forecastScreenVM.errorFlow,
         needRefresh = needRefresh
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScreen(
-    screenState: MainScreenState,
-    onEvent: (MainScreenEvent) -> Unit,
+private fun ForecastScreen(
+    screenState: ForecastScreenState,
+    onEvent: (ForecastScreenEvent) -> Unit,
     onSettingIconClick: (Unit) -> Unit,
     onSearchIconClick: (Unit) -> Unit,
     needRefresh: Boolean?,
-    errorFlow: SharedFlow<MainScreenError>
+    errorFlow: SharedFlow<ForecastScreenError>
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    var lastContent: MainScreenState by remember {
-        mutableStateOf(MainScreenState.Initial)
+    var lastContent: ForecastScreenState by remember {
+        mutableStateOf(ForecastScreenState.Initial)
     }
 
     LaunchedEffect(key1 = needRefresh) {
-        if (needRefresh == true) onEvent(MainScreenEvent.Refresh)
+        if (needRefresh == true) onEvent(ForecastScreenEvent.Refresh)
     }
 
     SideEffect {
-        if (screenState is MainScreenState.Content) lastContent = screenState
+        if (screenState is ForecastScreenState.Content) lastContent = screenState
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -113,9 +113,9 @@ private fun MainScreen(
             withContext(Dispatchers.Main.immediate) {
                 errorFlow.collectLatest {
                     val snackBarMessage = when (it) {
-                        MainScreenError.NetworkError -> context.getString(R.string.network_error_main_screen)
-                        MainScreenError.GpsAndNetworkError -> context.getString(R.string.gps_and_network_error)
-                        MainScreenError.GpsError -> context.getString(R.string.gps_error)
+                        ForecastScreenError.NetworkError -> context.getString(R.string.network_error_main_screen)
+                        ForecastScreenError.GpsAndNetworkError -> context.getString(R.string.gps_and_network_error)
+                        ForecastScreenError.GpsError -> context.getString(R.string.gps_error)
                     }
                     snackbarHostState.showSnackbar(snackBarMessage)
                 }
@@ -129,13 +129,13 @@ private fun MainScreen(
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 scope.launch {
-                    onEvent(MainScreenEvent.GetLocationWithGps)
+                    onEvent(ForecastScreenEvent.GetLocationWithGps)
                 }
             }
 
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 scope.launch {
-                    onEvent(MainScreenEvent.GetLocationWithGps)
+                    onEvent(ForecastScreenEvent.GetLocationWithGps)
                 }
             }
 
@@ -160,7 +160,7 @@ private fun MainScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = (lastContent as? MainScreenState.Content)?.data?.location ?: "",
+                        text = (lastContent as? ForecastScreenState.Content)?.data?.location ?: "",
                         style = ReplacementTheme.typography.large
                     )
                 },
@@ -185,7 +185,7 @@ private fun MainScreen(
                         if (checkLocationPermissions(context)
                         ) {
                             scope.launch {
-                                onEvent(MainScreenEvent.GetLocationWithGps)
+                                onEvent(ForecastScreenEvent.GetLocationWithGps)
                             }
                         } else {
                             locationPermissionRequest.launch(
@@ -215,19 +215,19 @@ private fun MainScreen(
         }
     ) { innerPadding ->
         when (screenState) {
-            is MainScreenState.Content, MainScreenState.Loading -> {
-                if (lastContent is MainScreenState.Content) {
-                    MainScreenContent(
+            is ForecastScreenState.Content, ForecastScreenState.Loading -> {
+                if (lastContent is ForecastScreenState.Content) {
+                    ForecastScreenContent(
                         modifier = Modifier
                             .padding(innerPadding)
                             .verticalScroll(rememberScrollState())
                             .padding(vertical = 32.dp, horizontal = 16.dp),
-                        currentForecast = (lastContent as MainScreenState.Content).data.currentForecast,
-                        hourlyForecast = (lastContent as MainScreenState.Content).data.hourlyForecast,
-                        dailyForecast = (lastContent as MainScreenState.Content).data.dailyForecast
+                        currentForecast = (lastContent as ForecastScreenState.Content).data.currentForecast,
+                        hourlyForecast = (lastContent as ForecastScreenState.Content).data.hourlyForecast,
+                        dailyForecast = (lastContent as ForecastScreenState.Content).data.dailyForecast
                     )
                 }
-                if (screenState is MainScreenState.Loading) {
+                if (screenState is ForecastScreenState.Loading) {
                     ProgressIndicator(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.background)
@@ -236,14 +236,22 @@ private fun MainScreen(
                 }
             }
 
-            MainScreenState.NoContent -> {}
-            MainScreenState.Initial -> {}
+            ForecastScreenState.NoContent -> {
+                ErrorMessage(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                )
+            }
+
+            ForecastScreenState.Initial -> {}
         }
     }
 }
 
 @Composable
-private fun MainScreenContent(
+private fun ForecastScreenContent(
     modifier: Modifier = Modifier,
     currentForecast: CurrentForecast,
     hourlyForecast: List<HourlyForecast>,
@@ -261,6 +269,7 @@ private fun MainScreenContent(
             ),
             currentForecast = currentForecast
         )
+        //TODO() graphs labels
         Spacer(modifier = Modifier.height(16.dp))
         HourlyChart(
             modifier = Modifier

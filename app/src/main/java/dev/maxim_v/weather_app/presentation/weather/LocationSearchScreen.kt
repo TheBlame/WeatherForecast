@@ -1,16 +1,14 @@
 package dev.maxim_v.weather_app.presentation.weather
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -59,6 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LocationSearchScreenRoot(
     onBackIconClick: (Unit) -> Unit,
+    onBackPress: (Unit) -> Unit,
     onLocationSelected: (Boolean) -> Unit
 ) {
     val locationSearchVM: LocationSearchScreenVM = hiltViewModel()
@@ -67,6 +65,7 @@ fun LocationSearchScreenRoot(
         screenState = locationSearchVM.locationSearchScreenState,
         onEvent = locationSearchVM::onEvent,
         onBackIconClick = onBackIconClick,
+        onBackPress= onBackPress,
         onLocationSelected = onLocationSelected
     )
 }
@@ -77,6 +76,7 @@ private fun LocationSearchScreen(
     screenState: LocationSearchScreenState,
     onEvent: (LocationSearchScreenEvent) -> Unit,
     onBackIconClick: (Unit) -> Unit,
+    onBackPress: (Unit) -> Unit,
     onLocationSelected: (Boolean) -> Unit
 ) {
     var searchedText by remember {
@@ -84,6 +84,10 @@ private fun LocationSearchScreen(
     }
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
+
+    BackHandler {
+        onBackPress(Unit)
+    }
 
     Scaffold(
         modifier = Modifier
@@ -101,7 +105,11 @@ private fun LocationSearchScreen(
                         },
                         textStyle = ReplacementTheme.typography.medium,
                         placeholder = {
-                            Text(text = stringResource(id = R.string.location_search_placeholder))
+                            Text(
+                                text = stringResource(id = R.string.location_search_placeholder),
+                                style = ReplacementTheme.typography.small,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
@@ -116,8 +124,9 @@ private fun LocationSearchScreen(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent,
-                            errorIndicatorColor = Color.Transparent
-
+                            errorIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         )
                     )
                 },
@@ -217,29 +226,6 @@ private fun SearchResultItem(modifier: Modifier = Modifier, searchedLocation: Se
 }
 
 @Composable
-private fun ErrorMessage(modifier: Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            modifier = Modifier.size(128.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            painter = painterResource(id = R.drawable.baseline_wifi_off_24),
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(id = R.string.network_error_search_screen),
-            style = ReplacementTheme.typography.medium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-    }
-}
-
-@Composable
 @Preview
 fun PreviewLocationSearchScreen() {
     WeatherForecastTheme {
@@ -271,6 +257,7 @@ fun PreviewLocationSearchScreen() {
             ),
             onEvent = {},
             onBackIconClick = {},
+            onBackPress = {},
             onLocationSelected = {}
         )
     }
