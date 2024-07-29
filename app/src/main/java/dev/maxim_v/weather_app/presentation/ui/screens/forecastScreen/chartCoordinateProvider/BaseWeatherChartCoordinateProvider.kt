@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider
 
 import kotlin.math.abs
 

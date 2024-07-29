@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -33,6 +33,7 @@ import androidx.core.graphics.drawable.toBitmap
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.HourlyForecast
 import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
+import dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider.HourlyChartCoordinateProvider
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 
@@ -155,7 +156,7 @@ fun HourlyChart(
 
                 drawText(
                     textMeasurer = textMeasurer,
-                    text = coordinate.yValue,
+                    text = context.getString(R.string.temp_format, coordinate.yValue),
                     style = valueTextStyle,
                     topLeft = Offset(
                         coordinate.x - measuredText.size.width / 2f,

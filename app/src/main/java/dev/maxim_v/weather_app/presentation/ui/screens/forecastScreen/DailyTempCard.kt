@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

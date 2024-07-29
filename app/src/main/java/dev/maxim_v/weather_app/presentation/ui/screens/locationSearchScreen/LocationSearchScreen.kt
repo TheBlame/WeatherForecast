@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.locationSearchScreen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.SearchedLocation
+import dev.maxim_v.weather_app.presentation.ui.screens.misc.ErrorMessage
+import dev.maxim_v.weather_app.presentation.ui.screens.misc.ProgressIndicator
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.presentation.viewmodels.LocationSearchScreenEvent

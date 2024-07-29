@@ -9,9 +9,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.maxim_v.weather_app.presentation.weather.ForecastScreenRoot
-import dev.maxim_v.weather_app.presentation.weather.LocationSearchScreenRoot
-import dev.maxim_v.weather_app.presentation.weather.SettingsScreenRoot
+import dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.ForecastScreenRoot
+import dev.maxim_v.weather_app.presentation.ui.screens.locationSearchScreen.LocationSearchScreenRoot
+import dev.maxim_v.weather_app.presentation.ui.screens.settingsScreen.SettingsScreenRoot
 
 private const val FADE_TRANSITION_TIME = 700
 private const val SLIDE_TRANSITION_TIME = 500

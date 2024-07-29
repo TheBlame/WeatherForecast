@@ -1,7 +1,7 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider
 
 import dev.maxim_v.weather_app.domain.entity.HourlyForecast
-import dev.maxim_v.weather_app.presentation.weather.ChartCoordinate.HourlyChartCoordinate
+import dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider.ChartCoordinate.HourlyChartCoordinate
 
 class HourlyChartCoordinateProvider(
     private val data: List<HourlyForecast>,

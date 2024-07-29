@@ -64,6 +64,7 @@ fun selectIcon(weatherType: WeatherType): Int {
 fun DrawScope.measureAndDrawText(
     textMeasurer: TextMeasurer,
     text: String,
+    textFormat: String,
     topLeft: Offset = Offset.Zero,
     style: TextStyle = TextStyle.Default
 ) {
@@ -74,7 +75,7 @@ fun DrawScope.measureAndDrawText(
 
     drawText(
         textMeasurer = textMeasurer,
-        text = text,
+        text = String.format(textFormat, text),
         style = style,
         topLeft = Offset(
             topLeft.x - textLayoutResult.size.width / 2f,

@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -26,6 +26,7 @@ import androidx.core.graphics.drawable.toBitmap
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.domain.entity.DailyForecast
 import dev.maxim_v.weather_app.domain.entity.enums.WeatherType
+import dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider.DailyChartCoordinateProvider
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.util.measureAndDrawText
@@ -98,6 +99,7 @@ fun DailyChart(
             measureAndDrawText(
                 textMeasurer,
                 coordinate.maxXValue,
+                context.getString(R.string.temp_format),
                 Offset(coordinate.x, coordinate.y - valueTextPadding),
                 valueTextStyle
             )
@@ -105,6 +107,7 @@ fun DailyChart(
             measureAndDrawText(
                 textMeasurer,
                 coordinate.minXValue,
+                context.getString(R.string.temp_format),
                 Offset(coordinate.x, size.height - graphBottomLinePadding + valueTextPadding),
                 valueTextStyle
             )
@@ -112,6 +115,7 @@ fun DailyChart(
             measureAndDrawText(
                 textMeasurer,
                 xValueText,
+                "%s",
                 Offset(contentHorizontalPadding + index * xStep,size.height - timeTextPadding),
                 dateTextStyle
             )

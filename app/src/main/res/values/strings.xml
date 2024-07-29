@@ -32,6 +32,8 @@
     <string name="network_error_search_screen">Check your internet connection</string>
     <string name="gps_error">Geolocation must be enabled to determine your location</string>
     <string name="gps_and_network_error">There must be an internet connection to determine your location</string>
+    <string name="daily_graph_label">24 hours:</string>
+    <string name="weekly_graph_label">2 weeks:</string>
     <string name="location_search_placeholder">City or area</string>
     <string name="north_direction">North</string>
     <string name="north_east_direction">North-east</string>

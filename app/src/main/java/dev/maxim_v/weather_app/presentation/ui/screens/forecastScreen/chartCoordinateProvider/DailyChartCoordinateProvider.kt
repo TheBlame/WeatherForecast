@@ -1,7 +1,7 @@
-package dev.maxim_v.weather_app.presentation.weather
+package dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider
 
 import dev.maxim_v.weather_app.domain.entity.DailyForecast
-import dev.maxim_v.weather_app.presentation.weather.ChartCoordinate.DailyChartCoordinate
+import dev.maxim_v.weather_app.presentation.ui.screens.forecastScreen.chartCoordinateProvider.ChartCoordinate.DailyChartCoordinate
 
 class DailyChartCoordinateProvider(
     private val data: List<DailyForecast>,
@@ -32,8 +32,4 @@ class DailyChartCoordinateProvider(
             weatherType = data[index].weatherType
         )
     }
-}
-
-fun main() {
-
 }
