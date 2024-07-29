@@ -3,6 +3,7 @@ package dev.maxim_v.weather_app.data.network.dto
 import dev.maxim_v.weather_app.data.database.dbmodels.CurrentForecastDbModel
 import dev.maxim_v.weather_app.data.database.dbmodels.DailyForecastDbModel
 import dev.maxim_v.weather_app.data.database.dbmodels.HourlyForecastDbModel
+import dev.maxim_v.weather_app.data.datastore.ForecastWorkerData
 import kotlin.math.roundToInt
 
 fun ForecastDto.toCurrentForecastDbModel(): CurrentForecastDbModel? {
@@ -67,6 +68,12 @@ fun ForecastDto.toDailyForecastDbModelList(): List<DailyForecastDbModel>? {
     } else null
 }
 
-fun ForecastDto.currentTemp(): String {
-    return this.current?.temperature2m?.roundToInt().toString()
+fun ForecastDto.toForecastWorkerData(timestamp: Long): ForecastWorkerData? {
+    return if (this.current != null) {
+        ForecastWorkerData(
+            temp = this.current.temperature2m.roundToInt().toString(),
+            weatherType = this.current.weatherCodeDto.weatherType,
+            timestamp = timestamp
+        )
+    } else null
 }

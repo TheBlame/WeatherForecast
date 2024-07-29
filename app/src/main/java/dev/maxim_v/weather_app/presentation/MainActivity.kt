@@ -2,7 +2,6 @@ package dev.maxim_v.weather_app.presentation
 
 import android.app.NotificationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkManager
 import dagger.hilt.android.AndroidEntryPoint
-import dev.maxim_v.weather_app.data.workers.ForecastWorker
+import dev.maxim_v.weather_app.data.workers.ForecastNotificationWorker
+import dev.maxim_v.weather_app.domain.usecases.UpdateWidgetsDataUseCase
 import dev.maxim_v.weather_app.presentation.navigation.AppNavGraph
 import dev.maxim_v.weather_app.presentation.ui.theme.WeatherForecastTheme
 import dev.maxim_v.weather_app.presentation.viewmodels.AppThemeState
@@ -25,6 +25,7 @@ import dev.maxim_v.weather_app.presentation.viewmodels.MainActivityVM
 import dev.maxim_v.weather_app.util.isDark
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -32,6 +33,8 @@ class MainActivity : ComponentActivity() {
     private val mainActivityVM: MainActivityVM by viewModels()
     private lateinit var workManager: WorkManager
     private lateinit var notificationManager: NotificationManager
+    @Inject
+    lateinit var updateWidgetsDataUseCase: UpdateWidgetsDataUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -45,29 +48,20 @@ class MainActivity : ComponentActivity() {
                 mainActivityVM.foregroundWorkState.collectLatest {
                     when (it) {
                         is ForegroundWorkState.Data -> {
-                            Log.d("worker",
-                                workManager.getWorkInfosForUniqueWork(ForecastWorker.NAME)
-                                    .toString()
-                            )
+                            try {
+                                updateWidgetsDataUseCase(true)
+                            } catch (_: Exception) {
+                            }
                             if (it.status.enabled) {
-                                Log.d("worker", "enable")
                                 workManager.enqueueUniquePeriodicWork(
-                                    ForecastWorker.NAME,
+                                    ForecastNotificationWorker.NAME,
                                     ExistingPeriodicWorkPolicy.REPLACE,
-                                    ForecastWorker.periodicWorkRequest()
+                                    ForecastNotificationWorker.periodicWorkRequest()
                                 )
-                                Log.d("worker",
-                                    workManager.getWorkInfosForUniqueWork(ForecastWorker.NAME)
-                                        .toString()
-                                )
+
                             } else if (!it.status.enabled) {
-                                Log.d("worker", "disable")
-                                workManager.cancelUniqueWork(ForecastWorker.NAME)
-                                ForecastWorker.cancelNotification(notificationManager)
-                                Log.d("worker",
-                                    workManager.getWorkInfosForUniqueWork(ForecastWorker.NAME)
-                                        .toString()
-                                )
+                                workManager.cancelUniqueWork(ForecastNotificationWorker.NAME)
+                                ForecastNotificationWorker.cancelNotification(notificationManager)
                             }
                         }
 

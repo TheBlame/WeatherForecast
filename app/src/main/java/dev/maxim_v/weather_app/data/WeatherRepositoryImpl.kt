@@ -5,6 +5,7 @@ import dev.maxim_v.weather_app.data.database.AppDatabase
 import dev.maxim_v.weather_app.data.database.dbmodels.toCurrent
 import dev.maxim_v.weather_app.data.database.dbmodels.toDaily
 import dev.maxim_v.weather_app.data.database.dbmodels.toHourly
+import dev.maxim_v.weather_app.data.datastore.ForecastWorkerData
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserSavedLocation
 import dev.maxim_v.weather_app.data.datastore.toUserSettings
@@ -13,9 +14,9 @@ import dev.maxim_v.weather_app.data.geocoder.mapToSearchedLocation
 import dev.maxim_v.weather_app.data.location.LocationService
 import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
-import dev.maxim_v.weather_app.data.network.dto.currentTemp
 import dev.maxim_v.weather_app.data.network.dto.toCurrentForecastDbModel
 import dev.maxim_v.weather_app.data.network.dto.toDailyForecastDbModelList
+import dev.maxim_v.weather_app.data.network.dto.toForecastWorkerData
 import dev.maxim_v.weather_app.data.network.dto.toHourlyForecastDbModelList
 import dev.maxim_v.weather_app.data.network.queryparams.CurrentParams
 import dev.maxim_v.weather_app.data.network.queryparams.DailyParams
@@ -46,6 +47,7 @@ class WeatherRepositoryImpl @Inject constructor(
     private val db: AppDatabase,
     private val locationDs: DataStore<UserSavedLocation>,
     private val prefDs: DataStore<UserPref>,
+    private val forecastWorkerDs: DataStore<ForecastWorkerData>,
     private val locationService: LocationService
 ) : WeatherRepository {
 
@@ -101,9 +103,7 @@ class WeatherRepositoryImpl @Inject constructor(
                 )
             )
             if (result is RequestResult.Error) throw NetworkException()
-        } else {
-            throw DatabaseException()
-        }
+        } else throw DatabaseException()
     }
 
     override suspend fun getLocationWithGps() {
@@ -134,11 +134,12 @@ class WeatherRepositoryImpl @Inject constructor(
 
     override fun getAppTheme(): Flow<ThemeType> = prefDs.data.map { it.theme }
 
-    override suspend fun getLocationWithGeocoding(city: String): Flow<List<SearchedLocation>> = flow {
-        emit(
-            geocoderSource.getLocationFromName(city)?.mapToSearchedLocation() ?: listOf()
-        )
-    }
+    override suspend fun getLocationWithGeocoding(city: String): Flow<List<SearchedLocation>> =
+        flow {
+            emit(
+                geocoderSource.getLocationFromName(city)?.mapToSearchedLocation() ?: listOf()
+            )
+        }
 
     override suspend fun saveLocation(location: SearchedLocation) {
         locationDs.updateData {
@@ -150,36 +151,49 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentTemp(): String {
+    override suspend fun loadCurrentTempAndWeather(highPriority: Boolean) {
+        val timestamp = System.currentTimeMillis()
         val pref = getPref()
+        val workerData = getWorkerData()
         val location = getSavedLocation()
-        val request = ForecastRequest(
-            latitude = location.latitude,
-            longitude = location.longitude,
-            currentParams = listOf(
-                CurrentParams.TEMPERATURE
-            ),
-            hourlyParams = null,
-            dailyParams = null,
-            temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
-            windSpeedUnitParam = null,
-            days = null
-        )
-        val result = forecastSource.getForecast(request)
+        if (highPriority || workerData.timestamp < timestamp - DATA_FRESHNESS_OFFSET) {
+            val request = ForecastRequest(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                currentParams = listOf(
+                    CurrentParams.TEMPERATURE, CurrentParams.CODE
+                ),
+                hourlyParams = null,
+                dailyParams = null,
+                temperatureUnitParam = TemperatureUnitParams.getFromPref(pref),
+                windSpeedUnitParam = null,
+                days = null
+            )
+            val result = forecastSource.getForecast(request)
 
-        if (result is RequestResult.Success) {
-            return result.content.currentTemp()
-        } else {
-            throw NetworkException()
+            if (result is RequestResult.Success) {
+                val newDsData = result.content.toForecastWorkerData(timestamp)
+                if (newDsData != null) {
+                    forecastWorkerDs.updateData {
+                        it.copy(
+                            temp = newDsData.temp,
+                            weatherType = newDsData.weatherType,
+                            timestamp = timestamp
+                        )
+                    }
+                }
+            } else throw NetworkException()
         }
     }
 
-    override fun getForegroundWorkStatus() = combine(prefDs.data, locationDs.data) { pref, location ->
-        ForegroundWorkStatus(
-            enabled = pref.notification,
-            location = location.city
-        )
-    }
+    override fun getForegroundWorkStatus() =
+        combine(prefDs.data, locationDs.data) { pref, location ->
+            ForegroundWorkStatus(
+                enabled = pref.notification,
+                location = location.city,
+                temperatureUnit = pref.tempUnit
+            )
+        }
 
     private suspend fun getPref(): UserPref {
         return prefDs.data.first()
@@ -187,5 +201,13 @@ class WeatherRepositoryImpl @Inject constructor(
 
     private suspend fun getSavedLocation(): UserSavedLocation {
         return locationDs.data.first()
+    }
+
+    private suspend fun getWorkerData(): ForecastWorkerData {
+        return forecastWorkerDs.data.first()
+    }
+
+    companion object {
+        const val DATA_FRESHNESS_OFFSET = 900000L
     }
 }

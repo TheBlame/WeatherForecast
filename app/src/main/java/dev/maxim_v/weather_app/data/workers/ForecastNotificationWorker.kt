@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.datastore.core.DataStore
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -19,15 +20,18 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dev.maxim_v.weather_app.R
-import dev.maxim_v.weather_app.domain.usecases.GetCurrentTemperatureUseCase
+import dev.maxim_v.weather_app.data.datastore.ForecastWorkerData
+import dev.maxim_v.weather_app.domain.usecases.UpdateWidgetsDataUseCase
 import dev.maxim_v.weather_app.util.createIconFromString
+import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
-class ForecastWorker @AssistedInject constructor(
+class ForecastNotificationWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val workerParameters: WorkerParameters,
-    private val getCurrentTemperatureUseCase: GetCurrentTemperatureUseCase
+    private val updateWidgetsDataUseCase: UpdateWidgetsDataUseCase,
+    private val forecastWorkerDs: DataStore<ForecastWorkerData>
 ) : CoroutineWorker(context, workerParameters) {
 
     private val notificationManager =
@@ -56,8 +60,8 @@ class ForecastWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         setForeground(createForegroundInfo())
         try {
-            val currentTemp = getCurrentTemperatureUseCase()
-            showCurrentTempNotification(currentTemp)
+            updateWidgetsDataUseCase()
+            showCurrentTempNotification(forecastWorkerDs.data.first().temp)
         } catch (_: Exception) {
         }
 
@@ -103,7 +107,7 @@ class ForecastWorker @AssistedInject constructor(
         const val LOADING_FORECAST_NOTIFICATION_ID = 2
 
         fun periodicWorkRequest(): PeriodicWorkRequest {
-            return PeriodicWorkRequestBuilder<ForecastWorker>(
+            return PeriodicWorkRequestBuilder<ForecastNotificationWorker>(
                 MIN_PERIODIC_INTERVAL_MILLIS,
                 TimeUnit.MILLISECONDS
             ).setConstraints(

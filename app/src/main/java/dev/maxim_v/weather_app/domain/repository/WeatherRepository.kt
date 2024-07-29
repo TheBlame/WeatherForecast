@@ -23,7 +23,7 @@ interface WeatherRepository {
 
     suspend fun saveLocation(location: SearchedLocation)
 
-    suspend fun getCurrentTemp(): String
+    suspend fun loadCurrentTempAndWeather(highPriority: Boolean = false)
 
     fun getForegroundWorkStatus(): Flow<ForegroundWorkStatus>
 }
