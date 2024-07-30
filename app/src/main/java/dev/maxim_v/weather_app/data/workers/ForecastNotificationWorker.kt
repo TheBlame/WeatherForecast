@@ -81,7 +81,7 @@ class ForecastNotificationWorker @AssistedInject constructor(
 
         val notification = NotificationCompat.Builder(context, LOADING_FORECAST_CHANNEL_ID)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_DEFAULT)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_stat_name)
             .build()
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -100,9 +100,9 @@ class ForecastNotificationWorker @AssistedInject constructor(
         const val NAME = "forecast_worker"
         const val NOTIFICATION_TIME_OUT = 5400000L
         const val CURRENT_FORECAST_CHANNEL_ID = "current_temp"
-        const val CURRENT_FORECAST_CHANNEL_NAME = "CurrentForecastChannel"
+        const val CURRENT_FORECAST_CHANNEL_NAME = "Current Forecast Channel"
         const val LOADING_FORECAST_CHANNEL_ID = "loading_data"
-        const val LOADING_FORECAST_CHANNEL_NAME = "LoadingChannel"
+        const val LOADING_FORECAST_CHANNEL_NAME = "Loading Channel"
         const val CURRENT_TEMP_NOTIFICATION_ID = 1
         const val LOADING_FORECAST_NOTIFICATION_ID = 2
 

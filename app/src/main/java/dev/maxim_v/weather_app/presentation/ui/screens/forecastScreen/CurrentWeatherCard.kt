@@ -63,9 +63,11 @@ fun CurrentWeatherCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
+                    modifier = Modifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
+
                         text = stringResource(id = R.string.temp_format, currentForecast.temp),
                         style = ReplacementTheme.typography.extraLarge,
                     )
@@ -77,7 +79,7 @@ fun CurrentWeatherCard(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
-                    modifier = Modifier.size(96.dp),
+                    modifier = Modifier.size(104.dp),
                     painter = painterResource(id = selectIcon(currentForecast.weatherType)),
                     contentDescription = null
                 )

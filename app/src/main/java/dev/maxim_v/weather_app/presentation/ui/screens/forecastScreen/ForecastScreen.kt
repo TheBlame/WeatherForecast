@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +35,9 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -40,6 +46,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -96,6 +103,7 @@ private fun ForecastScreen(
     errorFlow: SharedFlow<ForecastScreenError>
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val pullToRefreshState = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -157,7 +165,13 @@ private fun ForecastScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .pullToRefresh(
+                isRefreshing = screenState is ForecastScreenState.Loading,
+                state = pullToRefreshState,
+                onRefresh = { onEvent(ForecastScreenEvent.Refresh) }
+            ),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
@@ -220,15 +234,19 @@ private fun ForecastScreen(
         when (screenState) {
             is ForecastScreenState.Content, ForecastScreenState.Loading -> {
                 if (lastContent is ForecastScreenState.Content) {
-                    ForecastScreenContent(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState())
-                            .padding(vertical = 32.dp, horizontal = 16.dp),
-                        currentForecast = (lastContent as ForecastScreenState.Content).data.currentForecast,
-                        hourlyForecast = (lastContent as ForecastScreenState.Content).data.hourlyForecast,
-                        dailyForecast = (lastContent as ForecastScreenState.Content).data.dailyForecast
-                    )
+                    PullToRefreshBox(
+                        isRefreshing = screenState is ForecastScreenState.Loading,
+                        onRefresh = { onEvent(ForecastScreenEvent.Refresh) }) {
+                        ForecastScreenContent(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .verticalScroll(rememberScrollState())
+                                .padding(vertical = 32.dp, horizontal = 16.dp),
+                            currentForecast = (lastContent as ForecastScreenState.Content).data.currentForecast,
+                            hourlyForecast = (lastContent as ForecastScreenState.Content).data.hourlyForecast,
+                            dailyForecast = (lastContent as ForecastScreenState.Content).data.dailyForecast
+                        )
+                    }
                 }
                 if (screenState is ForecastScreenState.Loading) {
                     ProgressIndicator(
@@ -240,12 +258,29 @@ private fun ForecastScreen(
             }
 
             ForecastScreenState.NoContent -> {
-                ErrorMessage(
+                Column(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
                         .padding(innerPadding)
-                        .fillMaxSize()
-                )
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 32.dp, horizontal = 16.dp)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    ErrorMessage(
+                        modifier = Modifier.wrapContentSize()
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Button(
+                        onClick = { onEvent(ForecastScreenEvent.Refresh) }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.refresh),
+                            style = ReplacementTheme.typography.medium,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
             }
 
             ForecastScreenState.Initial -> {}

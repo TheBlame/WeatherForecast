@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.maxim_v.weather_app.R
 import dev.maxim_v.weather_app.presentation.ui.theme.ReplacementTheme
@@ -32,9 +34,11 @@ fun ErrorMessage(modifier: Modifier) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
+            modifier = Modifier.wrapContentSize(),
             text = stringResource(id = R.string.network_error_search_screen),
             style = ReplacementTheme.typography.medium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
         )
     }
 }

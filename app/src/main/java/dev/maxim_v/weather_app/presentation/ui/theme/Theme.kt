@@ -158,8 +158,8 @@ fun WeatherForecastTheme(
         extraLarge = TextStyle(
             fontFamily = rubikFamily,
             fontWeight = FontWeight.Normal,
-            fontSize = 72.sp,
-            lineHeight = 76.sp,
+            fontSize = 80.sp,
+            lineHeight = 84.sp,
             letterSpacing = 0.5.sp
         )
     )

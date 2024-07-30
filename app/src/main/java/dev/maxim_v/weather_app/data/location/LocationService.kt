@@ -7,8 +7,8 @@ import android.location.LocationManager
 import dev.maxim_v.weather_app.domain.exceptions.GpsException
 import dev.maxim_v.weather_app.util.checkLocationPermissions
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
-
 
 class LocationService(private val application: Application) {
     private val locationManager: LocationManager =
@@ -17,16 +17,22 @@ class LocationService(private val application: Application) {
     fun getLocation() = callbackFlow {
         if (checkLocationPermissions(application) && locationManager.isProviderEnabled(
                 LocationManager.GPS_PROVIDER
+            ) && locationManager.isProviderEnabled(
+                LocationManager.NETWORK_PROVIDER
             )
         ) {
-            val gpsLocationListener =
-                LocationListener {
-                    trySend(it)
+            val locationListener =
+                LocationListener { location ->
+                    trySend(location)
                 }
             locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 1000, 0f, gpsLocationListener
+                LocationManager.GPS_PROVIDER, 1000L, 0f, locationListener
             )
-            awaitClose { locationManager.removeUpdates(gpsLocationListener) }
+            delay(5000L)
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 1000L, 0f, locationListener
+            )
+            awaitClose { locationManager.removeUpdates(locationListener) }
         } else {
             throw GpsException()
         }
