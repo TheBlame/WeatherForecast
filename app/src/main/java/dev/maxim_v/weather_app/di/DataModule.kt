@@ -17,9 +17,10 @@ import dev.maxim_v.weather_app.data.datastore.UserLocationSerializer
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserPrefSerializer
 import dev.maxim_v.weather_app.data.datastore.UserSavedLocation
-import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
 import dev.maxim_v.weather_app.data.location.LocationService
-import dev.maxim_v.weather_app.data.network.api.ForecastApi
+import dev.maxim_v.weather_app.data.network.api.forecastApi.ForecastApi
+import dev.maxim_v.weather_app.data.network.api.geocoding.GeocodingApi
+import dev.maxim_v.weather_app.data.network.api.geocoding.ReverseGeocodingApi
 import dev.maxim_v.weather_app.domain.repository.WeatherRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,8 +55,14 @@ interface DataModule {
 
         @Singleton
         @Provides
-        fun provideGeocoder(application: Application): GeocoderSource {
-            return GeocoderSource(application)
+        fun provideGeocodingApi(): GeocodingApi {
+            return GeocodingApi.create()
+        }
+
+        @Singleton
+        @Provides
+        fun provideReverseGeocodingApi(): ReverseGeocodingApi {
+            return ReverseGeocodingApi.create()
         }
 
         @Singleton

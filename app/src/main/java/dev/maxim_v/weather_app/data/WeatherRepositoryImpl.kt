@@ -9,11 +9,10 @@ import dev.maxim_v.weather_app.data.datastore.ForecastWorkerData
 import dev.maxim_v.weather_app.data.datastore.UserPref
 import dev.maxim_v.weather_app.data.datastore.UserSavedLocation
 import dev.maxim_v.weather_app.data.datastore.toUserSettings
-import dev.maxim_v.weather_app.data.geocoder.GeocoderSource
-import dev.maxim_v.weather_app.data.geocoder.mapToSearchedLocation
+import dev.maxim_v.weather_app.data.geocoder.AppGeocoder
 import dev.maxim_v.weather_app.data.location.LocationService
-import dev.maxim_v.weather_app.data.network.api.ForecastRequest
 import dev.maxim_v.weather_app.data.network.api.RequestResult
+import dev.maxim_v.weather_app.data.network.api.forecastApi.ForecastRequest
 import dev.maxim_v.weather_app.data.network.dto.toCurrentForecastDbModel
 import dev.maxim_v.weather_app.data.network.dto.toDailyForecastDbModelList
 import dev.maxim_v.weather_app.data.network.dto.toForecastWorkerData
@@ -43,7 +42,7 @@ import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val forecastSource: ForecastSource,
-    private val geocoderSource: GeocoderSource,
+    private val appGeocoder: AppGeocoder,
     private val db: AppDatabase,
     private val locationDs: DataStore<UserSavedLocation>,
     private val prefDs: DataStore<UserPref>,
@@ -110,7 +109,7 @@ class WeatherRepositoryImpl @Inject constructor(
         val newLocation = locationService.getLocation().first()
         locationDs.updateData {
             val newCity =
-                geocoderSource.getLocationName(newLocation.latitude, newLocation.longitude)
+                appGeocoder.getLocationName(newLocation.latitude, newLocation.longitude)
             it.copy(
                 latitude = newLocation.latitude,
                 longitude = newLocation.longitude,
@@ -137,7 +136,7 @@ class WeatherRepositoryImpl @Inject constructor(
     override suspend fun getLocationWithGeocoding(city: String): Flow<List<SearchedLocation>> =
         flow {
             emit(
-                geocoderSource.getLocationFromName(city)?.mapToSearchedLocation() ?: listOf()
+                appGeocoder.getLocationFromName(city)
             )
         }
 

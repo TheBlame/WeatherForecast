@@ -1,4 +1,4 @@
-package dev.maxim_v.weather_app.data.network.api
+package dev.maxim_v.weather_app.data.network.api.forecastApi
 
 import dev.maxim_v.weather_app.data.network.dto.ForecastDto
 import dev.maxim_v.weather_app.data.network.queryparams.CurrentParams
