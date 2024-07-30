@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Прогноз погоды</string>
+    <string name="temperature">Температура</string>
+    <string name="wind_speed">Скорость ветра</string>
+    <string name="units">Единицы измерения</string>
+    <string name="theme">Тема</string>
+    <string name="light">Светла</string>
+    <string name="dark">Темная</string>
+    <string name="system">Системная</string>
+    <string name="settings">Настройки</string>
+    <string name="notification_panel">Панель уведомлений</string>
+    <string name="show_widget">Показать виджет</string>
+    <string name="humidity">Влажность</string>
+    <string name="wind">Ветер</string>
+    <string name="precipitation">%1$s мм</string>
+    <string name="kmh_format">%1$s км/ч %2$s</string>
+    <string name="ms_format">%1$s м/с %2$s</string>
+    <string name="kmh">км/ч</string>
+    <string name="ms">м/с</string>
+    <string name="apparent">Ощущается как: %1$s</string>
+    <string name="min">мин</string>
+    <string name="max">макс</string>
+    <string name="today">Сегодня</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="location_permissions">Пожалуйста разрешите доступ к местонахождению</string>
+    <string name="network_error_main_screen">Данные устарели. Проверьте соединение с интернетом</string>
+    <string name="network_error_search_screen">Проверьте соединение с интернетом</string>
+    <string name="gps_error">Для определения вашего местоположения должна быть включена геолокация</string>
+    <string name="gps_and_network_error">Для определения вашего местоположения необходимо подключение к интернету</string>
+    <string name="daily_graph_label">24 часа:</string>
+    <string name="weekly_graph_label">2 недели:</string>
+    <string name="location_search_placeholder">Город или район</string>
+    <string name="north_direction">Север</string>
+    <string name="north_east_direction">Северо-восток</string>
+    <string name="east_direction">Восток</string>
+    <string name="south_east_direction">Юго-восток</string>
+    <string name="south_direction">Юг</string>
+    <string name="south_west_direction">Юго-запад</string>
+    <string name="west_direction">Запад</string>
+    <string name="north_west_direction">Северо-запад</string>
+    <string name="refresh">Обновить</string>
+    <string name="notification_hint">Для корректной работы необходимо разрешить приложению работать в фоновом режиме</string>
+</resources>
